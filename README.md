@@ -11,7 +11,8 @@ cd gin-study
 
 ### 2. Initialize the project
 ```shell
-go mod init github.com/yourusername/gin-study
+go mod init github.com/yourusername/gin-study # replace yourusername with your github username
+# My Address is: go mod init github.com/luolayo/gin-study
 ```
 
 ### 3. Install the gin framework
