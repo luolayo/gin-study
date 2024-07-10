@@ -10,5 +10,6 @@ func UserRoutes(r *gin.RouterGroup) {
 }
 
 func TestRoutes(r *gin.RouterGroup) {
-	r.GET("/ping", TestController.Ping)
+	r.GET("", TestController.Ping)
+	r.POST("", TestController.Pong)
 }
