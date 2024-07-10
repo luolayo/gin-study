@@ -22,5 +22,8 @@ go get -u github.com/gin-gonic/gin
 
 ### 4. Create the main.go file
 
-
-## Basic routing
+## ToList
+- [x] Create a project directory
+- [x] Basic routing and basic functions
+- [] Encapsulating result library
+- [] Encapsulating the response interceptor
