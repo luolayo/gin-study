@@ -8,7 +8,7 @@
         "description": "Gin study is a small project for beginners to learn by writing a blog built by the gin framework.",
         "title": "Gin Study API",
         "contact": {},
-        "version": "1.0"
+        "version": "1.0.1"
     },
     "host": "localhost:8080",
     "basePath": "/",
