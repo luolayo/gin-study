@@ -2,6 +2,7 @@ package test
 
 import (
 	"encoding/json"
+	"github.com/luolayo/gin-study/Interceptor"
 	"github.com/luolayo/gin-study/Model"
 	"github.com/luolayo/gin-study/Router"
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,13 @@ func TestPing(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodGet, "/test", nil)
 	router.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "pong", w.Body.String())
+	res := Interceptor.ResponseSuccess[Interceptor.Empty]{}
+	err := json.Unmarshal(w.Body.Bytes(), &res)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, http.StatusOK, res.Code)
+	assert.Equal(t, "pong", res.Message)
 }
 
 func TestPong(t *testing.T) {
@@ -34,10 +41,12 @@ func TestPong(t *testing.T) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	r.ServeHTTP(ts, req)
 	assert.Equal(t, http.StatusOK, ts.Code)
-	res := Model.Test{}
+	res := Interceptor.ResponseSuccess[Model.Test]{}
 	err := json.Unmarshal(ts.Body.Bytes(), &res)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, test.Msg, res.Msg)
+	assert.Equal(t, http.StatusOK, res.Code)
+	assert.Equal(t, "success", res.Message)
+	assert.Equal(t, test.Msg, res.Data.Msg)
 }
