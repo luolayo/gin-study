@@ -60,7 +60,7 @@ func NewLogger(level Level) *Logger {
 	if err != nil {
 		panic(err)
 	}
-	// Create the log core
+	// Create the log Core
 	core := zapcore.NewCore(
 		zapcore.NewConsoleEncoder(config),                                                 // Use ConsoleEncoder to output logs in a custom format
 		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(logFile)), // Output to both console and specified output
