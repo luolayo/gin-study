@@ -14,3 +14,13 @@ func GetSystemConfig() Config.System {
 		Environment: os.Getenv("ENVIRONMENT"),
 	}
 }
+
+func GetDatabaseConfig() Config.Database {
+	return Config.Database{
+		Host:     os.Getenv("DB_HOST"),
+		Port:     os.Getenv("DB_PORT"),
+		Username: os.Getenv("DB_USERNAME"),
+		Password: os.Getenv("DB_PASSWORD"),
+		Database: os.Getenv("DB_DATABASE"),
+	}
+}
