@@ -25,5 +25,9 @@ go get -u github.com/gin-gonic/gin
 ## ToList
 - [x] Create a project directory
 - [x] Basic routing and basic functions
-- [ ] Encapsulating result library
-- [ ] Encapsulating the response interceptor
+- [x] Encapsulating result library
+- [x] Encapsulating the response interceptor
+- [x] Encapsulation Gorm
+- [x] Encapsulating the log library
+- [x] Encapsulating the configuration library
+- [ ] Create Data Table
