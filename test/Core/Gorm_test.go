@@ -41,3 +41,17 @@ func TestGormSelectAll(t *testing.T) {
 	db.Find(&tests)
 	t.Log(tests)
 }
+
+func TestGormConnect(t *testing.T) {
+	userGorm := Core.UserGorm()
+	if userGorm == nil {
+		t.Error("Gorm is nil")
+		return
+	} else {
+		t.Log("Gorm is not nil")
+	}
+	user := Model.User{}
+	userGorm.Find(&user)
+	t.Log(user)
+	defer Core.CloseGorm(userGorm)
+}
