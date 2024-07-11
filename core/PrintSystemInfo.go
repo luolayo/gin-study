@@ -1,4 +1,4 @@
-package core
+package Core
 
 import (
 	"github.com/luolayo/gin-study/Config"
