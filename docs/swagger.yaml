@@ -1,0 +1,90 @@
+basePath: /
+definitions:
+  Interceptor.Empty:
+    type: object
+  Interceptor.ResponseError:
+    properties:
+      code:
+        type: integer
+      err:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+    type: object
+  Interceptor.ResponseSuccess-Interceptor_Empty:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/Interceptor.Empty'
+      message:
+        type: string
+    type: object
+  Interceptor.ResponseSuccess-Model_Test:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/Model.Test'
+      message:
+        type: string
+    type: object
+  Model.Test:
+    properties:
+      msg:
+        type: string
+    required:
+    - msg
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Gin study is a small project for beginners to learn by writing a blog
+    built by the gin framework.
+  title: Gin Study API
+  version: "1.0"
+paths:
+  /test:
+    get:
+      description: Test ping
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Interceptor.ResponseSuccess-Interceptor_Empty'
+      summary: Ping
+      tags:
+      - Test
+    post:
+      consumes:
+      - application/json
+      description: Test pong
+      parameters:
+      - default: pong
+        description: msg
+        in: formData
+        name: msg
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/Interceptor.ResponseSuccess-Model_Test'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Interceptor.ResponseError'
+      summary: Pong
+      tags:
+      - Test
+schemes:
+- http
+- https
+swagger: "2.0"
