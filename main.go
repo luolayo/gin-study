@@ -10,7 +10,7 @@ import (
 
 // @BasePath /
 // @title Gin Study API
-// @Version 1.0
+// @Version 1.0.1
 // @Description Gin study is a small project for beginners to learn by writing a blog built by the gin framework.
 // @Host localhost:8080
 // @Schemes http https
