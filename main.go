@@ -7,10 +7,10 @@ import (
 )
 
 func main() {
-	system := Core.GetSystemConfig()
-	router := Router.GetRouter()
 	logger := Logger.NewLogger(Logger.InfoLevel)
+	system := Core.GetSystemConfig()
 	Core.PrintSystemInfo(logger, system)
+	router := Router.GetRouter()
 	err := router.Run(":" + system.Port)
 	if err != nil {
 		logger.Error("Error starting server: %s", err)
