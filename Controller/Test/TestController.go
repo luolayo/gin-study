@@ -2,21 +2,38 @@ package TestController
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/luolayo/gin-study/Logger"
+	"github.com/luolayo/gin-study/Interceptor"
 	"github.com/luolayo/gin-study/Model"
 )
 
+// Ping godoc
+// @Summary Ping
+// @Description Test ping
+// @Tags Test
+// @Schemes http https
+// @Produce  json
+// @Success 200 {object} Interceptor.ResponseSuccess[Interceptor.Empty]
+// @Router /test [Get]
 func Ping(c *gin.Context) {
-	c.String(200, "pong")
+	Interceptor.Success(c, "success", gin.H{})
 }
 
+// Pong godoc
+// @Summary Pong
+// @Description Test pong
+// @Tags Test
+// @Schemes http https
+// @Accept  json
+// @Produce  json
+// @Param msg formData string true "msg" default(pong)
+// @Success 200 {object} Interceptor.ResponseSuccess[Model.Test]
+// @Failure 400 {object} Interceptor.ResponseError
+// @Router /test [Post]
 func Pong(c *gin.Context) {
 	test := Model.Test{}
-	logger := Logger.NewLogger(Logger.ErrorLevel)
 	if err := c.ShouldBind(&test); err != nil {
-		logger.Error("Error: %s", err)
-		c.JSON(400, gin.H{"error": err.Error()})
+		Interceptor.BadRequest(c, "Invalid parameter", Interceptor.ValidateErr(err))
 		return
 	}
-	c.JSON(200, gin.H{"msg": &test.Msg})
+	Interceptor.Success(c, "success", test)
 }
