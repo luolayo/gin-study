@@ -1,13 +1,13 @@
-package Core
+package config
 
 import (
 	_ "github.com/joho/godotenv/autoload"
-	"github.com/luolayo/gin-study/Config"
 	"os"
 )
 
-func GetSystemConfig() Config.System {
-	return Config.System{
+// GetSystemConfig get system config
+func GetSystemConfig() *System {
+	return &System{
 		AppName:     os.Getenv("APP_NAME"),
 		AppVersion:  os.Getenv("APP_VERSION"),
 		Port:        os.Getenv("PORT"),
@@ -15,8 +15,9 @@ func GetSystemConfig() Config.System {
 	}
 }
 
-func GetDatabaseConfig() Config.Database {
-	return Config.Database{
+// GetDatabaseConfig get database config
+func GetDatabaseConfig() *Database {
+	return &Database{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     os.Getenv("DB_PORT"),
 		Username: os.Getenv("DB_USERNAME"),

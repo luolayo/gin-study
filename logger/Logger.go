@@ -1,4 +1,4 @@
-package Logger
+package logger
 
 import (
 	"go.uber.org/zap"
@@ -60,7 +60,7 @@ func NewLogger(level Level) *Logger {
 	if err != nil {
 		panic(err)
 	}
-	// Create the log Core
+	// Create the log core
 	core := zapcore.NewCore(
 		zapcore.NewConsoleEncoder(config),                                                 // Use ConsoleEncoder to output logs in a custom format
 		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(logFile)), // Output to both console and specified output

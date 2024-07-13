@@ -1,8 +1,8 @@
 basePath: /
 definitions:
-  Interceptor.Empty:
+  interceptor.Empty:
     type: object
-  Interceptor.ResponseError:
+  interceptor.ResponseError:
     properties:
       code:
         type: integer
@@ -13,25 +13,25 @@ definitions:
       message:
         type: string
     type: object
-  Interceptor.ResponseSuccess-Interceptor_Empty:
+  interceptor.ResponseSuccess-interceptor_Empty:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/Interceptor.Empty'
+        $ref: '#/definitions/interceptor.Empty'
       message:
         type: string
     type: object
-  Interceptor.ResponseSuccess-Model_Test:
+  interceptor.ResponseSuccess-model_Test:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/Model.Test'
+        $ref: '#/definitions/model.Test'
       message:
         type: string
     type: object
-  Model.Test:
+  model.Test:
     properties:
       msg:
         type: string
@@ -55,7 +55,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/Interceptor.ResponseSuccess-Interceptor_Empty'
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
       summary: Ping
       tags:
       - Test
@@ -64,23 +64,23 @@ paths:
       - application/json
       description: Test pong
       parameters:
-      - default: pong
-        description: msg
-        in: formData
-        name: msg
+      - description: Test data
+        in: body
+        name: data
         required: true
-        type: string
+        schema:
+          $ref: '#/definitions/model.Test'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/Interceptor.ResponseSuccess-Model_Test'
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_Test'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/Interceptor.ResponseError'
+            $ref: '#/definitions/interceptor.ResponseError'
       summary: Pong
       tags:
       - Test

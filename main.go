@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/luolayo/gin-study/Core"
-	"github.com/luolayo/gin-study/Logger"
-	"github.com/luolayo/gin-study/Router"
 	"github.com/luolayo/gin-study/docs"
+	"github.com/luolayo/gin-study/global"
+	"github.com/luolayo/gin-study/router"
+	"github.com/luolayo/gin-study/util"
 )
 
 // @BasePath /
@@ -15,17 +15,16 @@ import (
 // @Host localhost:8080
 // @Schemes http https
 func main() {
-	logger := Logger.NewLogger(Logger.InfoLevel)
-	system := Core.GetSystemConfig()
-	Core.PrintSystemInfo(logger, system)
-	if system.Environment == "release" {
+	global.InitGlobal()
+	util.PrintSystemInfo()
+	if global.SysConfig.Environment == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	docs.SwaggerInfo.Version = "1.0"
-	router := Router.GetRouter()
-	err := router.Run(":" + system.Port)
+	r := router.GetRouter()
+	err := r.Run(":" + global.SysConfig.Port)
 	if err != nil {
-		logger.Error("Error starting server: %s", err)
+		global.LOG.Error("Error starting server: %s", err)
 	}
 
 }

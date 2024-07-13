@@ -29,7 +29,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/Interceptor.ResponseSuccess-Interceptor_Empty"
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
                         }
                     }
                 }
@@ -48,25 +48,26 @@ const docTemplate = `{
                 "summary": "Pong",
                 "parameters": [
                     {
-                        "type": "string",
-                        "default": "pong",
-                        "description": "msg",
-                        "name": "msg",
-                        "in": "formData",
-                        "required": true
+                        "description": "Test data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Test"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/Interceptor.ResponseSuccess-Model_Test"
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_Test"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/Interceptor.ResponseError"
+                            "$ref": "#/definitions/interceptor.ResponseError"
                         }
                     }
                 }
@@ -74,10 +75,10 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "Interceptor.Empty": {
+        "interceptor.Empty": {
             "type": "object"
         },
-        "Interceptor.ResponseError": {
+        "interceptor.ResponseError": {
             "type": "object",
             "properties": {
                 "code": {
@@ -94,35 +95,35 @@ const docTemplate = `{
                 }
             }
         },
-        "Interceptor.ResponseSuccess-Interceptor_Empty": {
+        "interceptor.ResponseSuccess-interceptor_Empty": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/Interceptor.Empty"
+                    "$ref": "#/definitions/interceptor.Empty"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "Interceptor.ResponseSuccess-Model_Test": {
+        "interceptor.ResponseSuccess-model_Test": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/Model.Test"
+                    "$ref": "#/definitions/model.Test"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "Model.Test": {
+        "model.Test": {
             "type": "object",
             "required": [
                 "msg"

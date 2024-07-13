@@ -1,4 +1,4 @@
-package Interceptor
+package interceptor
 
 import (
 	"github.com/gin-gonic/gin"
