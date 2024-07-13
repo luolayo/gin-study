@@ -42,4 +42,5 @@ func InitGlobal() {
 	}
 	global.LOG = logger.NewLogger(level)
 	global.GormDB = core.GetGorm()
+	global.Aliyun = config.GetAliYunConfig()
 }
