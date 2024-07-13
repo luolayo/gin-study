@@ -75,6 +75,8 @@ func (a *aliyun) CheckVerificationCode(phoneNumber, verificationCode string) (er
 		err = errors.New("验证码输入错误")
 		return
 	}
+	// Verification code is correct, remove it from the cache
+	a.verificationCodeCache.Delete(phoneNumber)
 	return
 }
 
