@@ -31,7 +31,45 @@ definitions:
       message:
         type: string
     type: object
+  interceptor.ResponseSuccess-string:
+    properties:
+      code:
+        type: integer
+      data:
+        type: string
+      message:
+        type: string
+    type: object
   model.Test:
+    type: object
+  model.UserLogin:
+    properties:
+      passwd:
+        type: string
+      phone:
+        type: string
+    required:
+    - passwd
+    - phone
+    type: object
+  model.UserRegister:
+    properties:
+      code:
+        type: string
+      confirmPassword:
+        type: string
+      name:
+        type: string
+      passwd:
+        type: string
+      phone:
+        type: string
+    required:
+    - code
+    - confirmPassword
+    - name
+    - passwd
+    - phone
     type: object
 host: localhost:8080
 info:
@@ -104,7 +142,57 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/interceptor.ResponseError'
-      summary: CheckVerificationCode
+      summary: TestCheckVerificationCode
+      tags:
+      - Test
+  /test/decryption:
+    get:
+      consumes:
+      - application/json
+      description: Test encryption function
+      parameters:
+      - description: encryption
+        in: query
+        name: encryption
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: TestDecryption
+      tags:
+      - Test
+  /test/encryption:
+    get:
+      consumes:
+      - application/json
+      description: Test encryption function
+      parameters:
+      - description: Password
+        in: query
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-string'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: TestEncryption
       tags:
       - Test
   /test/sentVerificationCode:
@@ -127,9 +215,84 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/interceptor.ResponseError'
-      summary: SentVerificationCode
+      summary: TestSentVerificationCode
       tags:
       - Test
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: User login
+      parameters:
+      - description: User registration data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: User login
+      tags:
+      - User
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: User registration
+      parameters:
+      - description: User registration data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserRegister'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: User registration
+      tags:
+      - User
+  /util/sentVerificationCode:
+    get:
+      description: Sent verification code
+      parameters:
+      - description: Phone number
+        in: query
+        name: phone_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: SentVerificationCode
+      tags:
+      - Util
 schemes:
 - http
 - https
