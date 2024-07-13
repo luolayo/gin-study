@@ -72,6 +72,41 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/test/sentVerificationCode": {
+            "get": {
+                "description": "Sent verification code",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Test"
+                ],
+                "summary": "SentVerificationCode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Phone number",
+                        "name": "phone_number",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -124,15 +159,7 @@ const docTemplate = `{
             }
         },
         "model.Test": {
-            "type": "object",
-            "required": [
-                "msg"
-            ],
-            "properties": {
-                "msg": {
-                    "type": "string"
-                }
-            }
+            "type": "object"
         }
     }
 }`

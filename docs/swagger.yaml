@@ -32,11 +32,6 @@ definitions:
         type: string
     type: object
   model.Test:
-    properties:
-      msg:
-        type: string
-    required:
-    - msg
     type: object
 host: localhost:8080
 info:
@@ -82,6 +77,29 @@ paths:
           schema:
             $ref: '#/definitions/interceptor.ResponseError'
       summary: Pong
+      tags:
+      - Test
+  /test/sentVerificationCode:
+    get:
+      description: Sent verification code
+      parameters:
+      - description: Phone number
+        in: query
+        name: phone_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: SentVerificationCode
       tags:
       - Test
 schemes:
