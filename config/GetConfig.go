@@ -25,3 +25,11 @@ func GetDatabaseConfig() *Database {
 		Database: os.Getenv("DB_DATABASE"),
 	}
 }
+
+// GetAliYunConfig get aliyun config
+func GetAliYunConfig() *Aliyun {
+	return &Aliyun{
+		AccessKeyID:     os.Getenv("ALIYUN_ACCESS_KEY_ID"),
+		AccessKeySecret: os.Getenv("ALIYUN_ACCESS_KEY_SECRET"),
+	}
+}

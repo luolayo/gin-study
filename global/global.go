@@ -10,4 +10,5 @@ var (
 	LOG       *logger.Logger
 	SysConfig *config.System
 	GormDB    *gorm.DB
+	Aliyun    *config.Aliyun
 )
