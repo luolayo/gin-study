@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/luolayo/gin-study/config"
 	"github.com/luolayo/gin-study/global"
+	"github.com/luolayo/gin-study/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"time"
@@ -23,10 +24,13 @@ func GetGorm() *gorm.DB {
 		global.LOG.Error("GetGorm", err)
 		return nil
 	}
+	err = db.AutoMigrate(&model.Test{})
+	if err != nil {
+		global.LOG.Error("AutoMigrate", err)
+	}
 	sqlDb.SetMaxIdleConns(10)
 	sqlDb.SetMaxOpenConns(100)
 	sqlDb.SetConnMaxLifetime(time.Hour * 5)
-	defer CloseGorm(sqlDb)
 	return db
 }
 

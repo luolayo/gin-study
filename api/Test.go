@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/luolayo/gin-study/global"
 	"github.com/luolayo/gin-study/interceptor"
 	"github.com/luolayo/gin-study/model"
 )
@@ -35,5 +36,7 @@ func Pong(c *gin.Context) {
 		interceptor.BadRequest(c, "Invalid parameter", interceptor.ValidateErr(err))
 		return
 	}
+	testModel := global.GormDB.Model(&test)
+	testModel.Create(&test)
 	interceptor.Success(c, "success", test)
 }
