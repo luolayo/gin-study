@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type User struct {
 	gorm.Model
 	Name   string `gorm:"type:varchar(255);not null"`
-	Phone  string `gorm:"type:varchar(11);not null unique"`
+	Phone  string `gorm:"type:varchar(11);not null;unique"`
 	Passwd string `gorm:"type:varchar(255);not null"`
 }
 

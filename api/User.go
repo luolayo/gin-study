@@ -31,6 +31,12 @@ func UserRegister(c *gin.Context) {
 		interceptor.BadRequest(c, "Password inconsistency", nil)
 		return
 	}
+	user := model.User{}
+	global.GormDB.Where("phone = ?", userRegister.Phone).First(&user)
+	if user.ID != 0 {
+		interceptor.BadRequest(c, "User already exists", nil)
+		return
+	}
 	// verification code
 	if err := verifyCode.NewSms().CheckVerificationCode(userRegister.Phone, userRegister.Code); err != nil {
 		interceptor.BadRequest(c, "Failed to check verification code", nil)
@@ -38,7 +44,7 @@ func UserRegister(c *gin.Context) {
 	}
 	// Generate ciphertext password
 	passwd, _ := util.Encrypt(userRegister.Passwd)
-	user := model.User{
+	user = model.User{
 		Name:   userRegister.Name,
 		Phone:  userRegister.Phone,
 		Passwd: passwd,
