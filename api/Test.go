@@ -60,8 +60,29 @@ func SentVerificationCode(c *gin.Context) {
 	}
 	err := verifyCode.NewSms().SendVerificationCode(phoneNumber)
 	if err != nil {
-		interceptor.BadRequest(c, "Failed to send verification code", interceptor.ValidateErr(err))
-		global.LOG.Error("Failed to send verification code", err)
+		interceptor.BadRequest(c, "Failed to send verification code", nil)
+		global.LOG.Error("Failed to send verification code %v", err)
 		return
 	}
+	interceptor.Success(c, "success", gin.H{})
+}
+
+// CheckVerificationCode godoc
+// @Summary CheckVerificationCode
+// @Description Check verification code
+// @Tags Test
+// @Schemes http https
+// @Produce  json
+// @Param phone_number query string true "Phone number"
+// @Param verification_code query string true "Verification code"
+// @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
+// @Failure 400 {object} interceptor.ResponseError
+// @router /test/checkVerificationCode [Get]
+func CheckVerificationCode(c *gin.Context) {
+	phoneNumber := c.Query("phone_number")
+	verificationCode := c.Query("verification_code")
+	if phoneNumber == "" || verificationCode == "" {
+		interceptor.BadRequest(c, "Invalid parameter", nil)
+	}
+	interceptor.Success(c, "success", gin.H{})
 }
