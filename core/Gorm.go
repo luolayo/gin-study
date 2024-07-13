@@ -24,9 +24,9 @@ func GetGorm() *gorm.DB {
 		global.LOG.Error("GetGorm", err)
 		return nil
 	}
-	err = db.AutoMigrate(&model.Test{})
+	err = db.AutoMigrate(&model.Test{}, &model.User{})
 	if err != nil {
-		global.LOG.Error("AutoMigrate", err)
+		global.LOG.Error("AutoMigrate %v", err)
 	}
 	sqlDb.SetMaxIdleConns(10)
 	sqlDb.SetMaxOpenConns(100)

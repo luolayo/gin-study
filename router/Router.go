@@ -17,5 +17,7 @@ func GetRouter() *gin.Engine {
 	TestRoutes(router)
 	router = r.Group("/user")
 	UserRoutes(router)
+	router = r.Group("/util")
+	UtilRoutes(router)
 	return r
 }
