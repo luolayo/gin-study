@@ -5,6 +5,7 @@ import (
 	"github.com/luolayo/gin-study/global"
 	"github.com/luolayo/gin-study/interceptor"
 	"github.com/luolayo/gin-study/model"
+	"github.com/luolayo/gin-study/util"
 	"github.com/luolayo/gin-study/util/verifyCode"
 )
 
@@ -42,8 +43,8 @@ func Pong(c *gin.Context) {
 	interceptor.Success(c, "success", test)
 }
 
-// SentVerificationCode godoc
-// @Summary SentVerificationCode
+// TestSentVerificationCode godoc
+// @Summary TestSentVerificationCode
 // @Description Sent verification code
 // @Tags Test
 // @Schemes http https
@@ -52,7 +53,7 @@ func Pong(c *gin.Context) {
 // @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
 // @Failure 400 {object} interceptor.ResponseError
 // @router /test/sentVerificationCode [Get]
-func SentVerificationCode(c *gin.Context) {
+func TestSentVerificationCode(c *gin.Context) {
 	phoneNumber := c.Query("phone_number")
 	if phoneNumber == "" {
 		interceptor.BadRequest(c, "Invalid parameter", nil)
@@ -67,8 +68,8 @@ func SentVerificationCode(c *gin.Context) {
 	interceptor.Success(c, "success", gin.H{})
 }
 
-// CheckVerificationCode godoc
-// @Summary CheckVerificationCode
+// TestCheckVerificationCode godoc
+// @Summary TestCheckVerificationCode
 // @Description Check verification code
 // @Tags Test
 // @Schemes http https
@@ -78,11 +79,69 @@ func SentVerificationCode(c *gin.Context) {
 // @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
 // @Failure 400 {object} interceptor.ResponseError
 // @router /test/checkVerificationCode [Get]
-func CheckVerificationCode(c *gin.Context) {
+func TestCheckVerificationCode(c *gin.Context) {
 	phoneNumber := c.Query("phone_number")
 	verificationCode := c.Query("verification_code")
 	if phoneNumber == "" || verificationCode == "" {
 		interceptor.BadRequest(c, "Invalid parameter", nil)
+		return
+	}
+
+	if err := verifyCode.NewSms().CheckVerificationCode(phoneNumber, verificationCode); err != nil {
+		interceptor.BadRequest(c, "Failed to check verification code", nil)
+		return
 	}
 	interceptor.Success(c, "success", gin.H{})
+}
+
+// TestEncryption godoc
+// @Summary TestEncryption
+// @Description Test encryption function
+// @Tags Test
+// @Schemes http https
+// @Accept  json
+// @Produce  json
+// @Param password query string true "Password"
+// @Success 200 {object} interceptor.ResponseSuccess[string]
+// @Failure 400 {object} interceptor.ResponseError
+// @router /test/encryption [Get]
+func TestEncryption(c *gin.Context) {
+	password := c.Query("password")
+	if password == "" {
+		interceptor.BadRequest(c, "Invalid parameter", nil)
+		return
+	}
+	encryption, err := util.Encrypt(password)
+	if err != nil {
+		interceptor.BadRequest(c, "Failed to encrypt", nil)
+		global.LOG.Error("Failed to encrypt %v", err)
+		return
+	}
+	interceptor.Success(c, "success", encryption)
+}
+
+// TestDecryption godoc
+// @Summary TestDecryption
+// @Description Test encryption function
+// @Tags Test
+// @Schemes http https
+// @Accept  json
+// @Produce  json
+// @Param encryption query string true "encryption"
+// @Success 200 {object} interceptor.ResponseSuccess[string]
+// @Failure 400 {object} interceptor.ResponseError
+// @router /test/decryption [Get]
+func TestDecryption(c *gin.Context) {
+	encryption := c.Query("encryption")
+	if encryption == "" {
+		interceptor.BadRequest(c, "Invalid parameter", nil)
+		return
+	}
+	decryption, err := util.Decrypt(encryption)
+	if err != nil {
+		interceptor.BadRequest(c, "Failed to decrypt", nil)
+		global.LOG.Error("Failed to decrypt %v", err)
+		return
+	}
+	interceptor.Success(c, "success", decryption)
 }
