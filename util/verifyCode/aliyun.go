@@ -12,9 +12,10 @@ import (
 	"time"
 )
 
+// aliyun struct holds the caches for verification codes
 type aliyun struct {
-	verificationCodeCache    *cache.Cache // 验证码 5 分钟过期
-	verificationCodeReqCache *cache.Cache // 一分钟内只能发送一次验证码
+	verificationCodeCache    *cache.Cache // Cache for storing verification codes, expires in 5 minutes
+	verificationCodeReqCache *cache.Cache // Cache to prevent multiple requests within a minute
 }
 
 var (
@@ -22,6 +23,7 @@ var (
 	aliyunEntity *aliyun
 )
 
+// getAliyunEntity initializes and returns a singleton instance of aliyun
 func getAliyunEntity() *aliyun {
 	aliyunOnce.Do(func() {
 		aliyunEntity = new(aliyun)
@@ -31,30 +33,32 @@ func getAliyunEntity() *aliyun {
 	return aliyunEntity
 }
 
+// SendVerificationCode sends a verification code to the specified phone number
 func (a *aliyun) SendVerificationCode(phoneNumber string) (err error) {
-	// 验证是否可以获取验证码（1分钟有效期）
+	// Check if a verification code was sent recently (within 1 minute)
 	_, found := a.verificationCodeReqCache.Get(phoneNumber)
 	if found {
-		err = errors.New("请勿重复发送验证码")
+		err = errors.New("please do not send duplicate verification codes")
 		return
 	}
 
-	// 生成验证码
+	// Generate a new verification code
 	verifyCode := CreateRandCode()
 
-	// 发送短信
+	// Send the SMS
 	err = a.SendSms(a.getVerifyCodeReq(phoneNumber, verifyCode))
 	if err != nil {
 		return
 	}
 
-	// 验证码加入缓存
+	// Store the verification code in the caches
 	a.verificationCodeReqCache.SetDefault(phoneNumber, 1)
 	a.verificationCodeCache.SetDefault(phoneNumber, verifyCode)
 
 	return
 }
 
+// CheckVerificationCode checks if the provided verification code matches the stored code
 func (a *aliyun) CheckVerificationCode(phoneNumber, verificationCode string) (err error) {
 	cacheCode, found := a.verificationCodeCache.Get(phoneNumber)
 	if !found {
@@ -74,21 +78,22 @@ func (a *aliyun) CheckVerificationCode(phoneNumber, verificationCode string) (er
 	return
 }
 
-// CreateClient 可以上官网查看示例 https://next.api.aliyun.com/api/Dysmsapi/2017-05-25/SendSms?params={}
+// CreateClient creates a new Aliyun SMS client with the given access keys
 func (a *aliyun) CreateClient(accessKeyId *string, accessKeySecret *string) (_result *dysmsapi20170525.Client, _err error) {
 	config := &openapi.Config{
-		// 您的 AccessKey ID
+		// Your AccessKey ID
 		AccessKeyId: accessKeyId,
-		// 您的 AccessKey Secret
+		// Your AccessKey Secret
 		AccessKeySecret: accessKeySecret,
 	}
-	// 访问的域名
+	// Set the endpoint for the Aliyun SMS service
 	config.Endpoint = tea.String("dysmsapi.aliyuncs.com")
 	_result = &dysmsapi20170525.Client{}
 	_result, _err = dysmsapi20170525.NewClient(config)
 	return _result, _err
 }
 
+// SendSms sends an SMS using the Aliyun SMS service
 func (a *aliyun) SendSms(req dysmsapi20170525.SendSmsRequest) (_err error) {
 	client, _err := a.CreateClient(tea.String(global.Aliyun.AccessKeyID), tea.String(global.Aliyun.AccessKeySecret))
 	if _err != nil {
@@ -115,12 +120,13 @@ func (a *aliyun) SendSms(req dysmsapi20170525.SendSmsRequest) (_err error) {
 	return _err
 }
 
+// getVerifyCodeReq creates a SendSmsRequest with the given phone number and verification code
 func (a *aliyun) getVerifyCodeReq(phoneNumber, code string) (req dysmsapi20170525.SendSmsRequest) {
 	req = dysmsapi20170525.SendSmsRequest{
-		SignName:      tea.String("阿里云短信测试"),
-		TemplateCode:  tea.String("SMS_154950909"),
-		PhoneNumbers:  tea.String(phoneNumber),
-		TemplateParam: tea.String(`{"code":"` + code + `"}`),
+		SignName:      tea.String("阿里云短信测试"),                 // The SMS signature
+		TemplateCode:  tea.String("SMS_154950909"),           // The SMS template code
+		PhoneNumbers:  tea.String(phoneNumber),               // The recipient's phone number
+		TemplateParam: tea.String(`{"code":"` + code + `"}`), // The verification code to be sent
 	}
 	return
 }
