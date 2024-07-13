@@ -12,6 +12,7 @@ func GetSystemConfig() *System {
 		AppVersion:  os.Getenv("APP_VERSION"),
 		Port:        os.Getenv("PORT"),
 		Environment: os.Getenv("ENVIRONMENT"),
+		CryPtKey:    os.Getenv("CRYPT_KEY"),
 	}
 }
 
