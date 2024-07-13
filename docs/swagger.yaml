@@ -79,6 +79,34 @@ paths:
       summary: Pong
       tags:
       - Test
+  /test/checkVerificationCode:
+    get:
+      description: Check verification code
+      parameters:
+      - description: Phone number
+        in: query
+        name: phone_number
+        required: true
+        type: string
+      - description: Verification code
+        in: query
+        name: verification_code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: CheckVerificationCode
+      tags:
+      - Test
   /test/sentVerificationCode:
     get:
       description: Sent verification code
