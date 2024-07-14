@@ -17,7 +17,7 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param data body model.UserRegister true "User registration data"
-// @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
+// @Success 200 {object} interceptor.ResponseSuccess[model.UserResponse]
 // @Failure 400 {object} interceptor.ResponseError
 // @router /user/register [Post]
 func UserRegister(c *gin.Context) {
@@ -50,7 +50,13 @@ func UserRegister(c *gin.Context) {
 		Passwd: passwd,
 	}
 	global.GormDB.Create(&user)
-	interceptor.Success(c, "success", gin.H{})
+	token, _ := util.CreateToken(user)
+	interceptor.Success(c, "success", model.UserResponse{
+		ID:    user.ID,
+		Name:  user.Name,
+		Phone: user.Phone,
+		Token: token,
+	})
 }
 
 // UserLogin godoc
@@ -61,7 +67,7 @@ func UserRegister(c *gin.Context) {
 // @Accept  json
 // @Produce  json
 // @Param data body model.UserLogin true "User registration data"
-// @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
+// @Success 200 {object} interceptor.ResponseSuccess[model.UserResponse]
 // @Failure 400 {object} interceptor.ResponseError
 // @router /user/login [Post]
 func UserLogin(c *gin.Context) {
@@ -80,5 +86,43 @@ func UserLogin(c *gin.Context) {
 		interceptor.BadRequest(c, "Password error", nil)
 		return
 	}
-	interceptor.Success(c, "success", gin.H{})
+	token, _ := util.CreateToken(user)
+	interceptor.Success(c, "success", model.UserResponse{
+		ID:    user.ID,
+		Name:  user.Name,
+		Phone: user.Phone,
+		Token: token,
+	})
+}
+
+// UserInfo godoc
+// @Summary User information
+// @Description User information
+// @Tags User
+// @Schemes http https
+// @Accept  json
+// @Produce  json
+// @Param Authorization header string true "Authorization"
+// @Success 200 {object} interceptor.ResponseSuccess[model.UserResponse]
+// @Failure 400 {object} interceptor.ResponseError
+// @router /user/info [Get]
+func UserInfo(c *gin.Context) {
+	claims, ok := c.Get("claims")
+	if !ok {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	jwtClaims := claims.(util.JwtCustomClaims)
+	user := model.User{}
+	global.GormDB.Where("id = ?", jwtClaims.ID).First(&user)
+	if user.ID == 0 {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	interceptor.Success(c, "success", model.UserResponse{
+		ID:    user.ID,
+		Name:  user.Name,
+		Phone: user.Phone,
+		Token: c.GetHeader("Authorization"),
+	})
 }
