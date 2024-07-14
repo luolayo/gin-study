@@ -125,10 +125,10 @@ func (a *aliyun) SendSms(req dysmsapi20170525.SendSmsRequest) (_err error) {
 // getVerifyCodeReq creates a SendSmsRequest with the given phone number and verification code
 func (a *aliyun) getVerifyCodeReq(phoneNumber, code string) (req dysmsapi20170525.SendSmsRequest) {
 	req = dysmsapi20170525.SendSmsRequest{
-		SignName:      tea.String("阿里云短信测试"),                 // The SMS signature
-		TemplateCode:  tea.String("SMS_154950909"),           // The SMS template code
-		PhoneNumbers:  tea.String(phoneNumber),               // The recipient's phone number
-		TemplateParam: tea.String(`{"code":"` + code + `"}`), // The verification code to be sent
+		SignName:      tea.String(global.Aliyun.SignName),     // The SMS signature
+		TemplateCode:  tea.String(global.Aliyun.TemplateCode), // The SMS template code
+		PhoneNumbers:  tea.String(phoneNumber),                // The recipient's phone number
+		TemplateParam: tea.String(`{"code":"` + code + `"}`),  // The verification code to be sent
 	}
 	return
 }

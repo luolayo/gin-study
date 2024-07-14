@@ -32,5 +32,7 @@ func GetAliYunConfig() *Aliyun {
 	return &Aliyun{
 		AccessKeyID:     os.Getenv("ALIYUN_ACCESS_KEY_ID"),
 		AccessKeySecret: os.Getenv("ALIYUN_ACCESS_KEY_SECRET"),
+		SignName:        os.Getenv("ALIYUN_SIGN_NAME"),
+		TemplateCode:    os.Getenv("ALIYUN_TEMPLATE_CODE"),
 	}
 }
