@@ -7,4 +7,5 @@ type System struct {
 	Port        string // The Port the application will run on
 	Environment string // The Environment the application is running in
 	CryPtKey    string // The CryPtKey of the application
+	JwtSecret   string // The JWTKey of the application
 }

@@ -13,6 +13,7 @@ func GetSystemConfig() *System {
 		Port:        os.Getenv("PORT"),
 		Environment: os.Getenv("ENVIRONMENT"),
 		CryPtKey:    os.Getenv("CRYPT_KEY"),
+		JwtSecret:   os.Getenv("JWT_SECRET"),
 	}
 }
 
