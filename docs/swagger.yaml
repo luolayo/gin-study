@@ -31,6 +31,15 @@ definitions:
       message:
         type: string
     type: object
+  interceptor.ResponseSuccess-model_UserResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/model.UserResponse'
+      message:
+        type: string
+    type: object
   interceptor.ResponseSuccess-string:
     properties:
       code:
@@ -70,6 +79,17 @@ definitions:
     - name
     - passwd
     - phone
+    type: object
+  model.UserResponse:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      phone:
+        type: string
+      token:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -218,6 +238,31 @@ paths:
       summary: TestSentVerificationCode
       tags:
       - Test
+  /user/info:
+    get:
+      consumes:
+      - application/json
+      description: User information
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: User information
+      tags:
+      - User
   /user/login:
     post:
       consumes:
@@ -236,7 +281,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_UserResponse'
         "400":
           description: Bad Request
           schema:
@@ -262,7 +307,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_UserResponse'
         "400":
           description: Bad Request
           schema:

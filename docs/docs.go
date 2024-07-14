@@ -226,6 +226,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/info": {
+            "get": {
+                "description": "User information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "User information",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
         "/user/login": {
             "post": {
                 "description": "User login",
@@ -254,7 +292,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_UserResponse"
                         }
                     },
                     "400": {
@@ -294,7 +332,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_UserResponse"
                         }
                     },
                     "400": {
@@ -391,6 +429,20 @@ const docTemplate = `{
                 }
             }
         },
+        "interceptor.ResponseSuccess-model_UserResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/model.UserResponse"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "interceptor.ResponseSuccess-string": {
             "type": "object",
             "properties": {
@@ -446,6 +498,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "token": {
                     "type": "string"
                 }
             }
