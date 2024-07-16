@@ -14,7 +14,7 @@ import (
 // @Description User registration
 // @Tags User
 // @Schemes http https
-// @Accept  json
+// @Accept  x-www-form-urlencoded
 // @Produce  json
 // @Param data body model.UserRegister true "User registration data"
 // @Success 200 {object} interceptor.ResponseSuccess[model.UserResponse]
@@ -22,7 +22,7 @@ import (
 // @router /user/register [Post]
 func UserRegister(c *gin.Context) {
 	userRegister := model.UserRegister{}
-	if err := c.ShouldBind(userRegister); err != nil {
+	if err := c.ShouldBind(&userRegister); err != nil {
 		interceptor.BadRequest(c, "Invalid parameter", interceptor.ValidateErr(err))
 		return
 	}
@@ -64,7 +64,7 @@ func UserRegister(c *gin.Context) {
 // @Description User login
 // @Tags User
 // @Schemes http https
-// @Accept  json
+// @Accept  x-www-form-urlencoded
 // @Produce  json
 // @Param data body model.UserLogin true "User registration data"
 // @Success 200 {object} interceptor.ResponseSuccess[model.UserResponse]
@@ -72,7 +72,7 @@ func UserRegister(c *gin.Context) {
 // @router /user/login [Post]
 func UserLogin(c *gin.Context) {
 	userLogin := model.UserLogin{}
-	if err := c.ShouldBind(userLogin); err != nil {
+	if err := c.ShouldBind(&userLogin); err != nil {
 		interceptor.BadRequest(c, "Invalid parameter", interceptor.ValidateErr(err))
 		return
 	}
@@ -100,7 +100,7 @@ func UserLogin(c *gin.Context) {
 // @Description User information
 // @Tags User
 // @Schemes http https
-// @Accept  json
+// @Accept  x-www-form-urlencoded
 // @Produce  json
 // @Param Authorization header string true "Authorization"
 // @Success 200 {object} interceptor.ResponseSuccess[model.UserResponse]

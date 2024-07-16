@@ -9,6 +9,9 @@ type Validate struct {
 
 func formatValidateErr(errs error) []Validate {
 	var validateErrs []Validate
+	if errs.Error() == "EOF" {
+		return validateErrs
+	}
 	for _, err := range errs.(validator.ValidationErrors) {
 		validateErrs = append(validateErrs, Validate{
 			Key: err.Field(),
