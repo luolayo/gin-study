@@ -18,8 +18,8 @@ type UserRegister struct {
 }
 
 type UserLogin struct {
-	Phone  string `form:"phone" json:"phone" binding:"required"`
-	Passwd string `form:"passwd" json:"passwd" binding:"required"`
+	Phone  string `json:"phone" binding:"required" form:"phone"`
+	Passwd string `json:"passwd" binding:"required" form:"passwd"`
 }
 
 type UserResponse struct {

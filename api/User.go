@@ -21,8 +21,8 @@ import (
 // @Failure 400 {object} interceptor.ResponseError
 // @router /user/register [Post]
 func UserRegister(c *gin.Context) {
-	userRegister := &model.UserRegister{}
-	if err := c.ShouldBindJSON(userRegister); err != nil {
+	userRegister := model.UserRegister{}
+	if err := c.ShouldBind(userRegister); err != nil {
 		interceptor.BadRequest(c, "Invalid parameter", interceptor.ValidateErr(err))
 		return
 	}
@@ -71,8 +71,8 @@ func UserRegister(c *gin.Context) {
 // @Failure 400 {object} interceptor.ResponseError
 // @router /user/login [Post]
 func UserLogin(c *gin.Context) {
-	userLogin := &model.UserLogin{}
-	if err := c.ShouldBindJSON(userLogin); err != nil {
+	userLogin := model.UserLogin{}
+	if err := c.ShouldBind(userLogin); err != nil {
 		interceptor.BadRequest(c, "Invalid parameter", interceptor.ValidateErr(err))
 		return
 	}
