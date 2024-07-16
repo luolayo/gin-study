@@ -230,7 +230,7 @@ const docTemplate = `{
             "get": {
                 "description": "User information",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -268,7 +268,7 @@ const docTemplate = `{
             "post": {
                 "description": "User login",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -308,7 +308,7 @@ const docTemplate = `{
             "post": {
                 "description": "User registration",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"

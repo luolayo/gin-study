@@ -228,7 +228,7 @@
             "get": {
                 "description": "User information",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -266,7 +266,7 @@
             "post": {
                 "description": "User login",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -306,7 +306,7 @@
             "post": {
                 "description": "User registration",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
