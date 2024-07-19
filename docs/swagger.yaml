@@ -13,12 +13,32 @@ definitions:
       message:
         type: string
     type: object
+  interceptor.ResponseSuccess-array_model_ArticleResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.ArticleResponse'
+        type: array
+      message:
+        type: string
+    type: object
   interceptor.ResponseSuccess-interceptor_Empty:
     properties:
       code:
         type: integer
       data:
         $ref: '#/definitions/interceptor.Empty'
+      message:
+        type: string
+    type: object
+  interceptor.ResponseSuccess-model_ArticleResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/model.ArticleResponse'
       message:
         type: string
     type: object
@@ -48,6 +68,21 @@ definitions:
         type: string
       message:
         type: string
+    type: object
+  model.ArticleResponse:
+    properties:
+      context:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: integer
     type: object
   model.Test:
     type: object
@@ -99,6 +134,59 @@ info:
   title: Gin Study API
   version: 1.0.1
 paths:
+  /article:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: ArticleList
+      parameters:
+      - description: user_id
+        in: query
+        name: user_id
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-array_model_ArticleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: ArticleList
+      tags:
+      - Article
+  /article/:id:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Article
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_ArticleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: Article
+      tags:
+      - Article
   /test:
     get:
       description: Test ping

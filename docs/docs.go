@@ -15,6 +15,86 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/article": {
+            "get": {
+                "description": "ArticleList",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Article"
+                ],
+                "summary": "ArticleList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user_id",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "offset",
+                        "name": "offset",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-array_model_ArticleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/article/:id": {
+            "get": {
+                "description": "Article",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Article"
+                ],
+                "summary": "Article",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_ArticleResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
         "/test": {
             "get": {
                 "description": "Test ping",
@@ -401,6 +481,23 @@ const docTemplate = `{
                 }
             }
         },
+        "interceptor.ResponseSuccess-array_model_ArticleResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ArticleResponse"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "interceptor.ResponseSuccess-interceptor_Empty": {
             "type": "object",
             "properties": {
@@ -409,6 +506,20 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/interceptor.Empty"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "interceptor.ResponseSuccess-model_ArticleResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/model.ArticleResponse"
                 },
                 "message": {
                     "type": "string"
@@ -454,6 +565,29 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "model.ArticleResponse": {
+            "type": "object",
+            "properties": {
+                "context": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
