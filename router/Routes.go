@@ -25,3 +25,8 @@ func TestRoutes(r *gin.RouterGroup) {
 func UtilRoutes(r *gin.RouterGroup) {
 	r.GET("/sentVerificationCode", api.SentVerificationCode)
 }
+
+func ArticleRoutes(r *gin.RouterGroup) {
+	r.GET("/:id", api.Article)
+	r.GET("/", api.ArticleList)
+}
