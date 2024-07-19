@@ -24,7 +24,7 @@ func GetGorm() *gorm.DB {
 		global.LOG.Error("GetGorm", err)
 		return nil
 	}
-	err = db.AutoMigrate(&model.Test{}, &model.User{})
+	err = db.AutoMigrate(&model.Test{}, &model.User{}, &model.Article{})
 	if err != nil {
 		global.LOG.Error("AutoMigrate %v", err)
 	}
