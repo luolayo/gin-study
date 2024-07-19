@@ -43,10 +43,13 @@ func (a *aliyun) SendVerificationCode(phoneNumber string) (err error) {
 	}
 
 	// Generate a new verification code
-	verifyCode := CreateRandCode()
 
+	verifyCode := "123456"
 	// Send the SMS
-	err = a.SendSms(a.getVerifyCodeReq(phoneNumber, verifyCode))
+	if global.SysConfig.Environment != "development" {
+		verifyCode = CreateRandCode()
+		err = a.SendSms(a.getVerifyCodeReq(phoneNumber, verifyCode))
+	}
 	if err != nil {
 		return
 	}
