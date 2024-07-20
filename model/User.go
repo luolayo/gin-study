@@ -24,7 +24,7 @@ type User struct {
 	Activated  time.Time `gorm:"default: null" json:"-"`
 	Logged     time.Time `gorm:"default: null" json:"logged" description:"Last login time" example:"2021-07-01 00:00:00"`
 	Group      Group     `gorm:"default:'guest'" json:"group" description:"User group" example:"guest" enum:"admin,user,guest"`
-	Token      string    `gorm:"-" json:"token" description:"User token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsIm5hbWUiOiJhZG1pbiIsImV4cCI6MTYyNjMwNzQwMCwiaWF0IjoxNjI2MzA3MjAwfQ.7`
+	Token      string    `gorm:"-" json:"token" description:"User token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsIm5hbWUiOiJhZG1pbiIsImV4cCI6MTYyNjMwNzQwMCwiaWF0IjoxNjI2MzA3MjAwfQ"`
 
 	Contents []Content `gorm:"foreignKey:AuthorId" json:"-"`
 }

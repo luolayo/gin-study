@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/luolayo/gin-study/core"
+	"github.com/luolayo/gin-study/global"
 	"github.com/luolayo/gin-study/router"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -10,7 +10,7 @@ import (
 )
 
 func TestSentVerificationCode(t *testing.T) {
-	core.InitGlobal()
+	global.Init()
 	r := router.GetRouter()
 	w := httptest.NewRecorder()
 	phone := "18888888888"

@@ -3,7 +3,6 @@ package core
 import (
 	"database/sql"
 	"github.com/luolayo/gin-study/config"
-	"github.com/luolayo/gin-study/global"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"time"
@@ -20,8 +19,7 @@ func GetGorm() *gorm.DB {
 	}
 	sqlDb, err := db.DB()
 	if err != nil || sqlDb == nil {
-		global.LOG.Error("GetGorm", err)
-		return nil
+		panic(err)
 	}
 	sqlDb.SetMaxIdleConns(10)
 	sqlDb.SetMaxOpenConns(100)
@@ -37,7 +35,7 @@ func CloseGorm(db *sql.DB) {
 	}
 	err := db.Close()
 	if err != nil {
-		global.LOG.Error("CloseGorm", err)
+		panic(err)
 		return
 	}
 }

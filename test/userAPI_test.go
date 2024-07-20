@@ -2,7 +2,7 @@ package test
 
 import (
 	"github.com/goccy/go-json"
-	"github.com/luolayo/gin-study/core"
+	"github.com/luolayo/gin-study/global"
 	"github.com/luolayo/gin-study/model"
 	"github.com/luolayo/gin-study/router"
 	"github.com/stretchr/testify/assert"
@@ -13,7 +13,7 @@ import (
 )
 
 func TestRegitserUser(t *testing.T) {
-	core.InitGlobal()
+	global.Init()
 	r := router.GetRouter()
 	w := httptest.NewRecorder()
 	phone := "18888888888"
@@ -39,7 +39,7 @@ func TestRegitserUser(t *testing.T) {
 }
 
 func TestCheckUserPhone(t *testing.T) {
-	core.InitGlobal()
+	global.Init()
 	r := router.GetRouter()
 	w := httptest.NewRecorder()
 	phone := "18888888888"
@@ -50,7 +50,7 @@ func TestCheckUserPhone(t *testing.T) {
 }
 
 func TestCheckUserName(t *testing.T) {
-	core.InitGlobal()
+	global.Init()
 	r := router.GetRouter()
 	w := httptest.NewRecorder()
 	name := "luolayo"
@@ -61,7 +61,7 @@ func TestCheckUserName(t *testing.T) {
 }
 
 func TestUserLogin(t *testing.T) {
-	core.InitGlobal()
+	global.Init()
 	r := router.GetRouter()
 	w := httptest.NewRecorder()
 	userLoginInfo := model.UserLogin{

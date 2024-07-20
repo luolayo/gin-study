@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/luolayo/gin-study/logger"
+	"github.com/luolayo/gin-study/core"
 	"strconv"
 	"time"
 )
@@ -48,7 +48,7 @@ func colorForMethod(method string) string {
 }
 
 // LoggerMiddleware creates a new middleware for logging
-func LoggerMiddleware(log *logger.Logger) gin.HandlerFunc {
+func LoggerMiddleware(log *core.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		startTime := time.Now()
 

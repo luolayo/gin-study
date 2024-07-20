@@ -37,3 +37,17 @@ func GetAliYunConfig() *Aliyun {
 		TemplateCode:    os.Getenv("ALIYUN_TEMPLATE_CODE"),
 	}
 }
+
+// GetRedisConfig get redis config
+func GetRedisConfig() *Redis {
+	return &Redis{
+		Host:         os.Getenv("REDIS_HOST"),
+		Port:         os.Getenv("REDIS_PORT"),
+		DB:           os.Getenv("REDIS_DB"),
+		DialTimeout:  os.Getenv("REDIS_DIAL_TIMEOUT"),
+		ReadTimeout:  os.Getenv("REDIS_READ_TIMEOUT"),
+		WriteTimeout: os.Getenv("REDIS_WRITE_TIMEOUT"),
+		PoolSize:     os.Getenv("REDIS_POOL_SIZE"),
+		PoolTimeout:  os.Getenv("REDIS_POOL_TIMEOUT"),
+	}
+}

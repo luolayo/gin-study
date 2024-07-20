@@ -1,14 +1,14 @@
 package test
 
 import (
-	"github.com/luolayo/gin-study/core"
+	"github.com/luolayo/gin-study/global"
 	"github.com/luolayo/gin-study/model"
 	"github.com/luolayo/gin-study/util"
 	"testing"
 )
 
 func TestGetJWTToken(t *testing.T) {
-	core.InitGlobal()
+	global.Init()
 	user := model.User{
 		Uid:      1,
 		Name:     "test",
@@ -24,7 +24,7 @@ func TestGetJWTToken(t *testing.T) {
 }
 
 func TestParseJWTToken(t *testing.T) {
-	core.InitGlobal()
+	global.Init()
 	user := model.User{
 		Uid:      1,
 		Name:     "test",
