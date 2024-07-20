@@ -58,7 +58,16 @@ func RegisterUser(c *gin.Context) {
 		Url:        userReigster.Url,
 		ScreenName: userReigster.ScreenName,
 	}
-	global.GormDB.Create(&user)
+	tx := global.GormDB.Begin()
+	if err := tx.Create(&user).Error; err != nil {
+		tx.Rollback()
+		interceptor.ServerError(c, "Failed to create user")
+		return
+	}
+	if err := tx.Commit().Error; err != nil {
+		interceptor.ServerError(c, "Failed to create user")
+		return
+	}
 	token, _ := util.CreateToken(user)
 	user.Token = token
 	interceptor.Success(c, "Register success", user)
@@ -125,6 +134,7 @@ func CheckName(c *gin.Context) {
 // @Produce  json
 // @Param Authorization header string true "Authorization token" example({{token}})
 // @Success 200 {object} interceptor.ResponseSuccess[model.User]
+// @Failure 401 {object} interceptor.ResponseError
 // @Failure 400 {object} interceptor.ResponseError
 // @router /user/info [Get]
 func UserInfo(c *gin.Context) {
@@ -142,10 +152,19 @@ func UserInfo(c *gin.Context) {
 	}
 	updateToken(&user, jwtClaims)
 	global.LOG.Info("User information: %v", user)
+	tx := global.GormDB.Begin()
 	t := time.Now()
 	user.Activated = &t
 	global.LOG.Info("User information: %v", user)
-	global.GormDB.Save(&user)
+	if err := tx.Save(&user).Error; err != nil {
+		tx.Rollback()
+		interceptor.ServerError(c, "Failed to update user information")
+		return
+	}
+	if err := tx.Commit().Error; err != nil {
+		interceptor.ServerError(c, "Failed to update user information")
+		return
+	}
 	interceptor.Success(c, "success", user)
 }
 
@@ -203,7 +222,25 @@ func UserLogin(c *gin.Context) {
 // @Failure 400 {object} interceptor.ResponseError
 // @router /user/logout [Post]
 func UserLogout(c *gin.Context) {
-
+	claims, ok := c.Get("claims")
+	if !ok {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	jwtClaims := claims.(util.JwtCustomClaims)
+	user := model.User{}
+	global.GormDB.Where("uid = ?", jwtClaims.ID).First(&user)
+	if user.Uid == 0 {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	err := global.Redis.Del(jwtClaims.Name)
+	if err != nil {
+		global.LOG.Error("Failed to delete token %v", err)
+		interceptor.ServerError(c, "Failed to delete token")
+		return
+	}
+	interceptor.Success(c, "Logout success", interceptor.Empty{})
 }
 
 // updateToken Update token

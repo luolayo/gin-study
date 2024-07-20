@@ -12,6 +12,7 @@ func UserRoutes(r *gin.RouterGroup) {
 	r.GET("/checkName", api.CheckName)
 	r.GET("/info", middleware.Authentication(), api.UserInfo)
 	r.POST("/login", api.UserLogin)
+	r.GET("/logout", api.UserLogout)
 }
 
 func SMSRoutes(r *gin.RouterGroup) {
