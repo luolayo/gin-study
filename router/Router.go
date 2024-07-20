@@ -13,9 +13,5 @@ func GetRouter() *gin.Engine {
 	r.Use(middleware.RecoveryMiddleware(global.LOG))
 	r.Use(middleware.LoggerMiddleware(global.LOG))
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	router := r.Group("/test")
-	TestRoutes(router)
-	router = r.Group("/util")
-	UtilRoutes(router)
 	return r
 }

@@ -16,7 +16,7 @@ type JwtCustomClaims struct {
 func CreateToken(user model.User) (string, error) {
 	var jwtSecret = []byte(global.SysConfig.JwtSecret)
 	iJwtCustomClaims := JwtCustomClaims{
-		ID:       int(user.ID),
+		ID:       int(user.Uid),
 		Username: user.Name,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),

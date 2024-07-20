@@ -52,5 +52,14 @@ func InitGlobal() {
 }
 
 func AutoMigrate(db *gorm.DB) error {
-	return db.AutoMigrate(&model.User{})
+	return db.AutoMigrate(
+		&model.Test{},
+		&model.User{},
+		&model.Content{},
+		&model.Comment{},
+		&model.Link{},
+		&model.Meta{},
+		&model.Option{},
+		&model.Relationship{},
+	)
 }
