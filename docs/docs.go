@@ -226,7 +226,7 @@ const docTemplate = `{
             }
         },
         "/user/logout": {
-            "post": {
+            "get": {
                 "description": "User logout",
                 "consumes": [
                     "application/x-www-form-urlencoded"
@@ -256,6 +256,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/interceptor.ResponseError"
                         }

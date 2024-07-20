@@ -219,8 +219,9 @@ func UserLogin(c *gin.Context) {
 // @Produce  json
 // @Param Authorization header string true "Authorization token"
 // @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
+// @Failure 401 {object} interceptor.ResponseError
 // @Failure 400 {object} interceptor.ResponseError
-// @router /user/logout [Post]
+// @router /user/logout [Get]
 func UserLogout(c *gin.Context) {
 	claims, ok := c.Get("claims")
 	if !ok {
