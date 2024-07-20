@@ -7,15 +7,11 @@ import (
 	aliyunUtil "github.com/alibabacloud-go/tea-utils/service"
 	"github.com/alibabacloud-go/tea/tea"
 	"github.com/luolayo/gin-study/global"
-	"github.com/patrickmn/go-cache"
 	"sync"
 	"time"
 )
 
-// aliyun struct holds the caches for verification codes
 type aliyun struct {
-	verificationCodeCache    *cache.Cache // Cache for storing verification codes, expires in 5 minutes
-	verificationCodeReqCache *cache.Cache // Cache to prevent multiple requests within a minute
 }
 
 var (
@@ -27,8 +23,6 @@ var (
 func getAliyunEntity() *aliyun {
 	aliyunOnce.Do(func() {
 		aliyunEntity = new(aliyun)
-		aliyunEntity.verificationCodeReqCache = cache.New(time.Minute, time.Minute)
-		aliyunEntity.verificationCodeCache = cache.New(time.Minute*5, time.Minute*5)
 	})
 	return aliyunEntity
 }
@@ -36,8 +30,8 @@ func getAliyunEntity() *aliyun {
 // SendVerificationCode sends a verification code to the specified phone number
 func (a *aliyun) SendVerificationCode(phoneNumber string) (err error) {
 	// Check if a verification code was sent recently (within 1 minute)
-	_, found := a.verificationCodeReqCache.Get(phoneNumber)
-	if found {
+	ok, _ := global.Redis.Get(phoneNumber)
+	if ok != "" {
 		err = errors.New("please do not send duplicate verification codes")
 		return
 	}
@@ -55,31 +49,31 @@ func (a *aliyun) SendVerificationCode(phoneNumber string) (err error) {
 	}
 
 	// Store the verification code in the caches
-	a.verificationCodeReqCache.SetDefault(phoneNumber, 1)
-	a.verificationCodeCache.SetDefault(phoneNumber, verifyCode)
-
+	err = global.Redis.Set(phoneNumber, verifyCode, time.Minute)
+	if err != nil {
+		return err
+	}
 	return
 }
 
 // CheckVerificationCode checks if the provided verification code matches the stored code
 func (a *aliyun) CheckVerificationCode(phoneNumber, verificationCode string) (err error) {
-	cacheCode, found := a.verificationCodeCache.Get(phoneNumber)
-	if !found {
+	cacheCode, found := global.Redis.Get(phoneNumber)
+	if found != nil {
 		err = errors.New("验证码已失效")
 		return
 	}
 
-	cc, sure := cacheCode.(string)
-	if !sure {
-		err = errors.New("内部服务出错")
-		return
-	}
+	cc := cacheCode
 	if cc != verificationCode {
 		err = errors.New("验证码输入错误")
 		return
 	}
 	// Verification code is correct, remove it from the cache
-	a.verificationCodeCache.Delete(phoneNumber)
+	err = global.Redis.Del(phoneNumber)
+	if err != nil {
+		return err
+	}
 	return
 }
 

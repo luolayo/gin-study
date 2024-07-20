@@ -25,7 +25,17 @@ func CreateToken(user model.User) (string, error) {
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, iJwtCustomClaims)
-	return token.SignedString(jwtSecret)
+	tokenString, err := token.SignedString(jwtSecret)
+	if err != nil {
+		global.LOG.Error("Failed to create token %v", err)
+		return "", err
+	}
+	err = global.Redis.Set(user.Name, tokenString, 24*time.Hour)
+	if err != nil {
+		global.LOG.Error("Failed to set redis %v", err)
+		return "", err
+	}
+	return tokenString, nil
 }
 
 func ParseToken(tokenString string) (JwtCustomClaims, error) {
@@ -43,5 +53,17 @@ func ParseToken(tokenString string) (JwtCustomClaims, error) {
 }
 
 func UpdateToken(claims JwtCustomClaims) (string, error) {
-	return CreateToken(model.User{Uid: uint(claims.ID), Name: claims.Name})
+	err := global.Redis.Del(claims.Name)
+	if err != nil {
+		return "", err
+	}
+	token, err := CreateToken(model.User{Uid: uint(claims.ID), Name: claims.Name})
+	if err != nil {
+		return "", err
+	}
+	err = global.Redis.Set(claims.Name, token, 24*time.Hour)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }

@@ -8,7 +8,7 @@ import (
 
 func TestSMS(t *testing.T) {
 	global.Init()
-	phone := "18888888888"
+	phone := "18888888188"
 	err := verifyCode.NewSms().SendVerificationCode(phone)
 	if err != nil {
 		t.Error(err)

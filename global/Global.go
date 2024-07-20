@@ -3,6 +3,7 @@ package global
 import (
 	"github.com/luolayo/gin-study/config"
 	"github.com/luolayo/gin-study/core"
+	"github.com/luolayo/gin-study/model"
 	"gorm.io/gorm"
 )
 
@@ -27,4 +28,21 @@ func Init() {
 	GormDB = core.GetGorm()
 	Redis = core.NewRedisClient()
 	Aliyun = config.GetAliYunConfig()
+	if err := AutoMigrate(GormDB); err != nil {
+		LOG.Error("AutoMigrate failed: %s", err)
+		panic(err)
+	}
+}
+
+func AutoMigrate(db *gorm.DB) error {
+	return db.AutoMigrate(
+		&model.Test{},
+		&model.User{},
+		&model.Content{},
+		&model.Comment{},
+		&model.Link{},
+		&model.Meta{},
+		&model.Option{},
+		&model.Relationship{},
+	)
 }

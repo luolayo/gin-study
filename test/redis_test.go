@@ -23,7 +23,7 @@ func TestRedis(t *testing.T) {
 	}
 	t.Log("key:", value)
 
-	// 删除键
+	//删除键
 	err = global.Redis.Del("key")
 	if err != nil {
 		t.Error("Error setting key:", err)

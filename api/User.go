@@ -7,6 +7,7 @@ import (
 	"github.com/luolayo/gin-study/model"
 	"github.com/luolayo/gin-study/util"
 	"github.com/luolayo/gin-study/util/verifyCode"
+	"time"
 )
 
 // RegisterUser godoc
@@ -140,6 +141,11 @@ func UserInfo(c *gin.Context) {
 		return
 	}
 	updateToken(&user, jwtClaims)
+	global.LOG.Info("User information: %v", user)
+	t := time.Now()
+	user.Activated = &t
+	global.LOG.Info("User information: %v", user)
+	global.GormDB.Save(&user)
 	interceptor.Success(c, "success", user)
 }
 
@@ -163,7 +169,6 @@ func UserLogin(c *gin.Context) {
 	}
 	user := model.User{}
 	global.GormDB.Where("name = ?", userLogin.Name).First(&user)
-	global.LOG.Info("User information: %v", user)
 	if user.Uid == 0 {
 		interceptor.BadRequest(c, "User does not exist", nil)
 		return
@@ -172,8 +177,17 @@ func UserLogin(c *gin.Context) {
 		interceptor.BadRequest(c, "Password error", nil)
 		return
 	}
-	token, _ := util.CreateToken(user)
+	token, err := util.CreateToken(user)
+	if err != nil {
+		global.LOG.Error("Failed to create token %v", err)
+		interceptor.ServerError(c, "Failed to create token")
+		return
+	}
 	user.Token = token
+	// Update login time
+	t := time.Now()
+	user.Logged = &t
+	global.GormDB.Save(&user)
 	interceptor.Success(c, "Login success", user)
 }
 
