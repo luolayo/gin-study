@@ -5,30 +5,36 @@ definitions:
   interceptor.ResponseError:
     properties:
       code:
+        example: 400
         type: integer
       err:
         items:
           type: string
         type: array
       message:
+        example: Invalid request
         type: string
     type: object
   interceptor.ResponseSuccess-interceptor_Empty:
     properties:
       code:
+        example: 200
         type: integer
       data:
         $ref: '#/definitions/interceptor.Empty'
       message:
+        example: Success
         type: string
     type: object
   interceptor.ResponseSuccess-model_User:
     properties:
       code:
+        example: 200
         type: integer
       data:
         $ref: '#/definitions/model.User'
       message:
+        example: Success
         type: string
     type: object
   model.Group:
@@ -43,21 +49,34 @@ definitions:
     - GroupGuest
   model.User:
     properties:
+      activated:
+        description: Activated 给一个默认的当前时间
+        example: "2021-07-01 00:00:00"
+        type: string
       group:
-        $ref: '#/definitions/model.Group'
+        allOf:
+        - $ref: '#/definitions/model.Group'
+        example: guest
       logged:
+        example: "2021-07-01 00:00:00"
         type: string
       name:
+        example: admin
         type: string
       phone:
+        example: "18888888888"
         type: string
       screenName:
+        example: 罗拉
         type: string
       token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsIm5hbWUiOiJhZG1pbiIsImV4cCI6MTYyNjMwNzQwMCwiaWF0IjoxNjI2MzA3MjAwfQ
         type: string
       uid:
+        example: 1
         type: integer
       url:
+        example: https://www.luola.me
         type: string
     type: object
   model.UserLogin:
@@ -214,6 +233,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
       summary: UserInfo
       tags:
       - User
@@ -240,7 +263,36 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/interceptor.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
       summary: UserLogin
+      tags:
+      - User
+  /user/logout:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: User logout
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: UserLogout
       tags:
       - User
   /user/register:

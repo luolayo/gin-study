@@ -169,6 +169,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/interceptor.ResponseError"
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
                     }
                 }
             }
@@ -202,6 +208,50 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/interceptor.ResponseSuccess-model_User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/logout": {
+            "post": {
+                "description": "User logout",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "UserLogout",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
                         }
                     },
                     "400": {
@@ -268,7 +318,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 400
                 },
                 "err": {
                     "type": "array",
@@ -277,7 +328,8 @@ const docTemplate = `{
                     }
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Invalid request"
                 }
             }
         },
@@ -285,13 +337,15 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 200
                 },
                 "data": {
                     "$ref": "#/definitions/interceptor.Empty"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Success"
                 }
             }
         },
@@ -299,13 +353,15 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 200
                 },
                 "data": {
                     "$ref": "#/definitions/model.User"
                 },
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Success"
                 }
             }
         },
@@ -325,29 +381,46 @@ const docTemplate = `{
         "model.User": {
             "type": "object",
             "properties": {
+                "activated": {
+                    "description": "Activated 给一个默认的当前时间",
+                    "type": "string",
+                    "example": "2021-07-01 00:00:00"
+                },
                 "group": {
-                    "$ref": "#/definitions/model.Group"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Group"
+                        }
+                    ],
+                    "example": "guest"
                 },
                 "logged": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-07-01 00:00:00"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "admin"
                 },
                 "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "18888888888"
                 },
                 "screenName": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "罗拉"
                 },
                 "token": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsIm5hbWUiOiJhZG1pbiIsImV4cCI6MTYyNjMwNzQwMCwiaWF0IjoxNjI2MzA3MjAwfQ"
                 },
                 "uid": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "url": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "https://www.luola.me"
                 }
             }
         },
