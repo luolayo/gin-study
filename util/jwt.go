@@ -41,3 +41,7 @@ func ParseToken(tokenString string) (JwtCustomClaims, error) {
 	}
 	return iJwtCustomClaims, err
 }
+
+func UpdateToken(claims JwtCustomClaims) (string, error) {
+	return CreateToken(model.User{Uid: uint(claims.ID), Name: claims.Name})
+}

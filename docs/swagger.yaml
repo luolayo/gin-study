@@ -13,17 +13,6 @@ definitions:
       message:
         type: string
     type: object
-  interceptor.ResponseSuccess-array_model_ArticleResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        items:
-          $ref: '#/definitions/model.ArticleResponse'
-        type: array
-      message:
-        type: string
-    type: object
   interceptor.ResponseSuccess-interceptor_Empty:
     properties:
       code:
@@ -33,98 +22,85 @@ definitions:
       message:
         type: string
     type: object
-  interceptor.ResponseSuccess-model_ArticleResponse:
+  interceptor.ResponseSuccess-model_User:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/model.ArticleResponse'
+        $ref: '#/definitions/model.User'
       message:
         type: string
     type: object
-  interceptor.ResponseSuccess-model_Test:
+  model.Group:
+    enum:
+    - admin
+    - user
+    - guest
+    type: string
+    x-enum-varnames:
+    - GroupAdmin
+    - GroupUser
+    - GroupGuest
+  model.User:
     properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/model.Test'
-      message:
+      group:
+        $ref: '#/definitions/model.Group'
+      logged:
         type: string
-    type: object
-  interceptor.ResponseSuccess-model_UserResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/model.UserResponse'
-      message:
-        type: string
-    type: object
-  interceptor.ResponseSuccess-string:
-    properties:
-      code:
-        type: integer
-      data:
-        type: string
-      message:
-        type: string
-    type: object
-  model.ArticleResponse:
-    properties:
-      context:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: integer
-      title:
-        type: string
-      updated_at:
-        type: string
-      user_id:
-        type: integer
-    type: object
-  model.Test:
-    type: object
-  model.UserLogin:
-    properties:
-      passwd:
+      name:
         type: string
       phone:
         type: string
+      screenName:
+        type: string
+      token:
+        type: string
+      uid:
+        type: integer
+      url:
+        type: string
+    type: object
+  model.UserLogin:
+    properties:
+      name:
+        example: admin
+        type: string
+      password:
+        example: "123456"
+        type: string
     required:
-    - passwd
-    - phone
+    - name
+    - password
     type: object
   model.UserRegister:
     properties:
       code:
+        example: "123456"
         type: string
       confirmPassword:
+        example: "123456"
         type: string
       name:
+        example: admin
         type: string
-      passwd:
+      password:
+        example: "123456"
         type: string
       phone:
+        example: "18888888888"
+        type: string
+      screenName:
+        example: 罗拉
+        type: string
+      url:
+        example: https://www.luola.me
         type: string
     required:
     - code
     - confirmPassword
     - name
-    - passwd
+    - password
     - phone
-    type: object
-  model.UserResponse:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      phone:
-        type: string
-      token:
-        type: string
     type: object
 host: localhost:8080
 info:
@@ -134,280 +110,13 @@ info:
   title: Gin Study API
   version: 1.0.1
 paths:
-  /article:
-    get:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: ArticleList
-      parameters:
-      - description: user_id
-        in: query
-        name: user_id
-        type: string
-      - description: limit
-        in: query
-        name: limit
-        required: true
-        type: string
-      - description: offset
-        in: query
-        name: offset
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-array_model_ArticleResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/interceptor.ResponseError'
-      summary: ArticleList
-      tags:
-      - Article
-  /article/:id:
-    get:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: Article
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-model_ArticleResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/interceptor.ResponseError'
-      summary: Article
-      tags:
-      - Article
-  /test:
-    get:
-      description: Test ping
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
-      summary: Ping
-      tags:
-      - Test
-    post:
-      consumes:
-      - application/json
-      description: Test pong
-      parameters:
-      - description: Test data
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.Test'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-model_Test'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/interceptor.ResponseError'
-      summary: Pong
-      tags:
-      - Test
-  /test/checkVerificationCode:
-    get:
-      description: Check verification code
-      parameters:
-      - description: Phone number
-        in: query
-        name: phone_number
-        required: true
-        type: string
-      - description: Verification code
-        in: query
-        name: verification_code
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/interceptor.ResponseError'
-      summary: TestCheckVerificationCode
-      tags:
-      - Test
-  /test/decryption:
-    get:
-      consumes:
-      - application/json
-      description: Test encryption function
-      parameters:
-      - description: encryption
-        in: query
-        name: encryption
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-string'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/interceptor.ResponseError'
-      summary: TestDecryption
-      tags:
-      - Test
-  /test/encryption:
-    get:
-      consumes:
-      - application/json
-      description: Test encryption function
-      parameters:
-      - description: Password
-        in: query
-        name: password
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-string'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/interceptor.ResponseError'
-      summary: TestEncryption
-      tags:
-      - Test
-  /test/sentVerificationCode:
+  /SMS/send:
     get:
       description: Sent verification code
       parameters:
       - description: Phone number
-        in: query
-        name: phone_number
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/interceptor.ResponseError'
-      summary: TestSentVerificationCode
-      tags:
-      - Test
-  /user/info:
-    get:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: User information
-      parameters:
-      - description: Authorization
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-model_UserResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/interceptor.ResponseError'
-      summary: User information
-      tags:
-      - User
-  /user/login:
-    post:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: User login
-      parameters:
-      - description: User registration data
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.UserLogin'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-model_UserResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/interceptor.ResponseError'
-      summary: User login
-      tags:
-      - User
-  /user/register:
-    post:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: User registration
-      parameters:
-      - description: User registration data
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.UserRegister'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/interceptor.ResponseSuccess-model_UserResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/interceptor.ResponseError'
-      summary: User registration
-      tags:
-      - User
-  /util/sentVerificationCode:
-    get:
-      description: Sent verification code
-      parameters:
-      - description: Phone number
+        example: "18888888888"
+        format: "18888888888"
         in: query
         name: phone_number
         required: true
@@ -425,7 +134,145 @@ paths:
             $ref: '#/definitions/interceptor.ResponseError'
       summary: SentVerificationCode
       tags:
-      - Util
+      - SMS
+  /user/checkName:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: check username availability
+      parameters:
+      - description: Username
+        example: luolayo
+        format: luolayo
+        in: query
+        maxLength: 10
+        minLength: 5
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: CheckName
+      tags:
+      - User
+  /user/checkPhone:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: check phone number availability
+      parameters:
+      - description: UserPhone
+        example: "18888888888"
+        format: "18888888888"
+        in: query
+        name: phone
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: CheckPhone
+      tags:
+      - User
+  /user/info:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get user information
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: UserInfo
+      tags:
+      - User
+  /user/login:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: User login
+      parameters:
+      - description: User login data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: UserLogin
+      tags:
+      - User
+  /user/register:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Register user
+      parameters:
+      - description: User registration data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserRegister'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: RegisterUser
+      tags:
+      - User
 schemes:
 - http
 - https

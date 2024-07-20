@@ -6,14 +6,14 @@ import (
 )
 
 type ResponseSuccess[T any] struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
+	Code    int    `json:"code" description:"Status code" example:"200"`
+	Message string `json:"message" description:"Response message" example:"Success"`
 	Data    T      `json:"data"`
 }
 
 type ResponseError struct {
-	Code    int      `json:"code"`
-	Message string   `json:"message"`
+	Code    int      `json:"code" description:"Status code" example:"400"`
+	Message string   `json:"message" description:"Response message" example:"Invalid request"`
 	Err     []string `json:"err"`
 }
 type Empty struct{}
@@ -48,4 +48,8 @@ func Unauthorized(c *gin.Context, msg string) {
 
 func Forbidden(c *gin.Context, msg string) {
 	Error(c, http.StatusForbidden, msg, nil)
+}
+
+func ServerError(c *gin.Context, msg string) {
+	Error(c, http.StatusInternalServerError, msg, nil)
 }

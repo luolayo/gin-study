@@ -15,277 +15,105 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/article": {
-            "get": {
-                "description": "ArticleList",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Article"
-                ],
-                "summary": "ArticleList",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "user_id",
-                        "name": "user_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "limit",
-                        "name": "limit",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "offset",
-                        "name": "offset",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-array_model_ArticleResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseError"
-                        }
-                    }
-                }
-            }
-        },
-        "/article/:id": {
-            "get": {
-                "description": "Article",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Article"
-                ],
-                "summary": "Article",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_ArticleResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseError"
-                        }
-                    }
-                }
-            }
-        },
-        "/test": {
-            "get": {
-                "description": "Test ping",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Test"
-                ],
-                "summary": "Ping",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Test pong",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Test"
-                ],
-                "summary": "Pong",
-                "parameters": [
-                    {
-                        "description": "Test data",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Test"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_Test"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseError"
-                        }
-                    }
-                }
-            }
-        },
-        "/test/checkVerificationCode": {
-            "get": {
-                "description": "Check verification code",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Test"
-                ],
-                "summary": "TestCheckVerificationCode",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Phone number",
-                        "name": "phone_number",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Verification code",
-                        "name": "verification_code",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseError"
-                        }
-                    }
-                }
-            }
-        },
-        "/test/decryption": {
-            "get": {
-                "description": "Test encryption function",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Test"
-                ],
-                "summary": "TestDecryption",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "encryption",
-                        "name": "encryption",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseError"
-                        }
-                    }
-                }
-            }
-        },
-        "/test/encryption": {
-            "get": {
-                "description": "Test encryption function",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Test"
-                ],
-                "summary": "TestEncryption",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Password",
-                        "name": "password",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseError"
-                        }
-                    }
-                }
-            }
-        },
-        "/test/sentVerificationCode": {
+        "/SMS/send": {
             "get": {
                 "description": "Sent verification code",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Test"
+                    "SMS"
                 ],
-                "summary": "TestSentVerificationCode",
+                "summary": "SentVerificationCode",
                 "parameters": [
                     {
                         "type": "string",
+                        "format": "18888888888",
+                        "example": "18888888888",
                         "description": "Phone number",
                         "name": "phone_number",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/checkName": {
+            "get": {
+                "description": "check username availability",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "CheckName",
+                "parameters": [
+                    {
+                        "maxLength": 10,
+                        "minLength": 5,
+                        "type": "string",
+                        "format": "luolayo",
+                        "example": "luolayo",
+                        "description": "Username",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/checkPhone": {
+            "get": {
+                "description": "check phone number availability",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "CheckPhone",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "18888888888",
+                        "example": "18888888888",
+                        "description": "UserPhone",
+                        "name": "phone",
                         "in": "query",
                         "required": true
                     }
@@ -308,7 +136,7 @@ const docTemplate = `{
         },
         "/user/info": {
             "get": {
-                "description": "User information",
+                "description": "Get user information",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -318,11 +146,12 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "User information",
+                "summary": "UserInfo",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Authorization",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
                         "name": "Authorization",
                         "in": "header",
                         "required": true
@@ -332,7 +161,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_UserResponse"
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_User"
                         }
                     },
                     "400": {
@@ -356,10 +185,10 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "User login",
+                "summary": "UserLogin",
                 "parameters": [
                     {
-                        "description": "User registration data",
+                        "description": "User login data",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -372,7 +201,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_UserResponse"
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_User"
                         }
                     },
                     "400": {
@@ -386,7 +215,7 @@ const docTemplate = `{
         },
         "/user/register": {
             "post": {
-                "description": "User registration",
+                "description": "Register user",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -396,7 +225,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "User registration",
+                "summary": "RegisterUser",
                 "parameters": [
                     {
                         "description": "User registration data",
@@ -412,7 +241,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_UserResponse"
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_User"
                         }
                     },
                     "400": {
@@ -420,38 +249,9 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/interceptor.ResponseError"
                         }
-                    }
-                }
-            }
-        },
-        "/util/sentVerificationCode": {
-            "get": {
-                "description": "Sent verification code",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Util"
-                ],
-                "summary": "SentVerificationCode",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Phone number",
-                        "name": "phone_number",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
-                        }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/interceptor.ResponseError"
                         }
@@ -481,23 +281,6 @@ const docTemplate = `{
                 }
             }
         },
-        "interceptor.ResponseSuccess-array_model_ArticleResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/model.ArticleResponse"
-                    }
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
         "interceptor.ResponseSuccess-interceptor_Empty": {
             "type": "object",
             "properties": {
@@ -512,100 +295,76 @@ const docTemplate = `{
                 }
             }
         },
-        "interceptor.ResponseSuccess-model_ArticleResponse": {
+        "interceptor.ResponseSuccess-model_User": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/model.ArticleResponse"
+                    "$ref": "#/definitions/model.User"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "interceptor.ResponseSuccess-model_Test": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/model.Test"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "interceptor.ResponseSuccess-model_UserResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/model.UserResponse"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "interceptor.ResponseSuccess-string": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.ArticleResponse": {
-            "type": "object",
-            "properties": {
-                "context": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "model.Test": {
-            "type": "object"
-        },
-        "model.UserLogin": {
-            "type": "object",
-            "required": [
-                "passwd",
-                "phone"
+        "model.Group": {
+            "type": "string",
+            "enum": [
+                "admin",
+                "user",
+                "guest"
             ],
+            "x-enum-varnames": [
+                "GroupAdmin",
+                "GroupUser",
+                "GroupGuest"
+            ]
+        },
+        "model.User": {
+            "type": "object",
             "properties": {
-                "passwd": {
+                "group": {
+                    "$ref": "#/definitions/model.Group"
+                },
+                "logged": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 },
                 "phone": {
                     "type": "string"
+                },
+                "screenName": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserLogin": {
+            "type": "object",
+            "required": [
+                "name",
+                "password"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "admin"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "123456"
                 }
             }
         },
@@ -615,41 +374,37 @@ const docTemplate = `{
                 "code",
                 "confirmPassword",
                 "name",
-                "passwd",
+                "password",
                 "phone"
             ],
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "123456"
                 },
                 "confirmPassword": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "123456"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "admin"
                 },
-                "passwd": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.UserResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
+                "password": {
+                    "type": "string",
+                    "example": "123456"
                 },
                 "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "18888888888"
                 },
-                "token": {
-                    "type": "string"
+                "screenName": {
+                    "type": "string",
+                    "example": "罗拉"
+                },
+                "url": {
+                    "type": "string",
+                    "example": "https://www.luola.me"
                 }
             }
         }

@@ -16,6 +16,7 @@ func Encrypt(plaintext string) (string, error) {
 	key := global.SysConfig.CryPtKey
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
+		global.LOG.Error("Failed to create cipher: %v", err)
 		return "", err
 	}
 
@@ -24,6 +25,7 @@ func Encrypt(plaintext string) (string, error) {
 	iv := ciphertext[:aes.BlockSize]
 
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		global.LOG.Error("Failed to read random: %v", err)
 		return "", err
 	}
 
@@ -39,15 +41,18 @@ func Decrypt(encrypted string) (string, error) {
 	key := global.SysConfig.CryPtKey
 	ciphertext, err := base64.URLEncoding.DecodeString(encrypted)
 	if err != nil {
+		global.LOG.Error("Failed to decode base64: %v", err)
 		return "", err
 	}
 
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
+		global.LOG.Error("Failed to create cipher: %v", err)
 		return "", err
 	}
 
 	if len(ciphertext) < aes.BlockSize {
+		global.LOG.Error("Ciphertext too short")
 		return "", errors.New("ciphertext too short")
 	}
 
