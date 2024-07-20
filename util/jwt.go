@@ -8,16 +8,16 @@ import (
 )
 
 type JwtCustomClaims struct {
-	ID       int
-	Username string
+	ID   int
+	Name string
 	jwt.RegisteredClaims
 }
 
 func CreateToken(user model.User) (string, error) {
 	var jwtSecret = []byte(global.SysConfig.JwtSecret)
 	iJwtCustomClaims := JwtCustomClaims{
-		ID:       int(user.Uid),
-		Username: user.Name,
+		ID:   int(user.Uid),
+		Name: user.Name,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
