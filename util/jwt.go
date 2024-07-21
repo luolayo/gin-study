@@ -1,6 +1,7 @@
 package util
 
 import (
+	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/luolayo/gin-study/global"
 	"github.com/luolayo/gin-study/model"
@@ -48,6 +49,10 @@ func ParseToken(tokenString string) (JwtCustomClaims, error) {
 		if claims, ok := token.Claims.(*JwtCustomClaims); ok && token.Valid {
 			return *claims, nil
 		}
+	}
+	v, _ := global.Redis.Get(iJwtCustomClaims.Name)
+	if v == "" {
+		return iJwtCustomClaims, errors.New("token expired")
 	}
 	return iJwtCustomClaims, err
 }
