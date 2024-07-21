@@ -217,7 +217,7 @@ func UserLogin(c *gin.Context) {
 // @Schemes http https
 // @Accept x-www-form-urlencoded
 // @Produce  json
-// @Param Authorization header string true "Authorization token"
+// @Param Authorization header string true "Authorization token" example({{token}})
 // @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
 // @Failure 401 {object} interceptor.ResponseError
 // @Failure 400 {object} interceptor.ResponseError
@@ -236,12 +236,267 @@ func UserLogout(c *gin.Context) {
 		return
 	}
 	err := global.Redis.Del(jwtClaims.Name)
+	global.LOG.Info("Delete token %v", jwtClaims.Name)
 	if err != nil {
 		global.LOG.Error("Failed to delete token %v", err)
 		interceptor.ServerError(c, "Failed to delete token")
 		return
 	}
 	interceptor.Success(c, "Logout success", interceptor.Empty{})
+}
+
+// GetUserInfoById godoc
+// @Summary GetUserInfoById
+// @Description Get user information by id
+// @Tags User
+// @Schemes http https
+// @Accept x-www-form-urlencoded
+// @Produce  json
+// @Param uid query string true "User id" example(1)
+// @Param Authorization header string true "Authorization token" example({{token}})
+// @Success 200 {object} interceptor.ResponseSuccess[model.User]
+// @Failure 400 {object} interceptor.ResponseError
+// @Failure 401 {object} interceptor.ResponseError
+// @Failure 403 {object} interceptor.ResponseError
+// @router /user/getUserInfoById [Get]
+func GetUserInfoById(c *gin.Context) {
+	uid := c.Query("uid")
+	if uid == "" {
+		interceptor.BadRequest(c, "User id cannot be empty", nil)
+		return
+	}
+	user := model.User{}
+	global.GormDB.Where("uid = ?", uid).First(&user)
+	if user.Uid == 0 {
+		interceptor.BadRequest(c, "User does not exist", nil)
+		return
+	}
+	interceptor.Success(c, "success", user)
+}
+
+// UpdateUserInfo godoc
+// @Summary UpdateUserInfo
+// @Description Update user information
+// @Tags User
+// @Schemes http https
+// @Accept x-www-form-urlencoded
+// @Produce  json
+// @Param data body model.UserUpdate true "User update data"
+// @Param Authorization header string true "Authorization token" example({{token}})
+// @Success 200 {object} interceptor.ResponseSuccess[model.User]
+// @Failure 400 {object} interceptor.ResponseError
+// @Failure 401 {object} interceptor.ResponseError
+// @router /user/updateUserInfo [Post]
+func UpdateUserInfo(c *gin.Context) {
+	userUpdate := model.UserUpdate{}
+	if err := c.ShouldBind(&userUpdate); err != nil {
+		interceptor.BadRequest(c, "Invalid request", interceptor.ValidateErr(err))
+		return
+	}
+	claims, ok := c.Get("claims")
+	if !ok {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	jwtClaims := claims.(util.JwtCustomClaims)
+	user := model.User{}
+	global.GormDB.Where("uid = ?", jwtClaims.ID).First(&user)
+	if user.Uid == 0 {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	if userUpdate.Url != "" {
+		user.Url = userUpdate.Url
+	}
+	if userUpdate.ScreenName != "" {
+		user.ScreenName = userUpdate.ScreenName
+	}
+	tx := global.GormDB.Begin()
+	if err := tx.Save(&user).Error; err != nil {
+		tx.Rollback()
+		interceptor.ServerError(c, "Failed to update user information")
+		return
+	}
+	if err := tx.Commit().Error; err != nil {
+		interceptor.ServerError(c, "Failed to update user information")
+		return
+	}
+	interceptor.Success(c, "success", user)
+
+}
+
+// UpdateUserPassword godoc
+// @Summary UpdateUserPassword
+// @Description Update user password
+// @Tags User
+// @Schemes http https
+// @Accept x-www-form-urlencoded
+// @Produce  json
+// @Param Authorization header string true "Authorization token" example({{token}})
+// @Param newPassword formData string true "New password" minlength(6)  maxlength(20) example(123456)
+// @Param code formData string true "Verification code" length(6) example(123456)
+// @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
+// @Failure 400 {object} interceptor.ResponseError
+// @Failure 401 {object} interceptor.ResponseError
+// @router /user/updateUserPassword [Post]
+func UpdateUserPassword(c *gin.Context) {
+	newPassword := c.PostForm("newPassword")
+	code := c.PostForm("code")
+	if newPassword == "" {
+		interceptor.BadRequest(c, "New password cannot be empty", nil)
+		return
+	}
+	if code == "" {
+		interceptor.BadRequest(c, "Verification code cannot be empty", nil)
+		return
+	}
+	claims, ok := c.Get("claims")
+	if !ok {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	jwtClaims := claims.(util.JwtCustomClaims)
+	user := model.User{}
+	global.GormDB.Where("uid = ?", jwtClaims.ID).First(&user)
+	if user.Uid == 0 {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	if err := verifyCode.NewSms().CheckVerificationCode(user.Phone, code); err != nil {
+		interceptor.BadRequest(c, "Verification code error", nil)
+		return
+	}
+	encryptPassword, err := util.Encrypt(newPassword)
+	if err != nil {
+		interceptor.ServerError(c, "Failed to encrypt password")
+		return
+	}
+	tx := global.GormDB.Begin()
+	user.Password = encryptPassword
+	if err := tx.Save(&user).Error; err != nil {
+		tx.Rollback()
+		interceptor.ServerError(c, "Failed to update user password")
+		return
+	}
+	if err := tx.Commit().Error; err != nil {
+		interceptor.ServerError(c, "Failed to update user password")
+		return
+	}
+	interceptor.Success(c, "success", interceptor.Empty{})
+}
+
+// UpdateUserPhone godoc
+// @Summary UpdateUserPhone
+// @Description Update user phone number
+// @Tags User
+// @Schemes http https
+// @Accept x-www-form-urlencoded
+// @Produce  json
+// @Param Authorization header string true "Authorization token" example({{token}})
+// @Param phone formData string true "Phone number" length(11) example(18888888888) Format(18888888888)
+// @Param code formData string true "Verification code" length(6) example(123456)
+// @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
+// @Failure 400 {object} interceptor.ResponseError
+// @Failure 401 {object} interceptor.ResponseError
+// @router /user/updateUserPhone [Post]
+func UpdateUserPhone(c *gin.Context) {
+	phone := c.PostForm("phone")
+	code := c.PostForm("code")
+	if phone == "" {
+		interceptor.BadRequest(c, "Phone number cannot be empty", nil)
+		return
+	}
+	if code == "" {
+		interceptor.BadRequest(c, "Verification code cannot be empty", nil)
+		return
+	}
+	claims, ok := c.Get("claims")
+	if !ok {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	jwtClaims := claims.(util.JwtCustomClaims)
+	user := model.User{}
+	global.GormDB.Where("uid = ?", jwtClaims.ID).First(&user)
+	if user.Uid == 0 {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	if err := verifyCode.NewSms().CheckVerificationCode(phone, code); err != nil {
+		interceptor.BadRequest(c, "Verification code error", nil)
+		return
+	}
+	tx := global.GormDB.Begin()
+	user.Phone = phone
+	if err := tx.Save(&user).Error; err != nil {
+		tx.Rollback()
+		interceptor.ServerError(c, "Failed to update user phone number")
+		return
+	}
+	if err := tx.Commit().Error; err != nil {
+		interceptor.ServerError(c, "Failed to update user phone number")
+		return
+	}
+	interceptor.Success(c, "success", interceptor.Empty{})
+}
+
+// GetUserList godoc
+// @Summary GetUserList
+// @Description Get user list
+// @Tags User
+// @Schemes http https
+// @Accept x-www-form-urlencoded
+// @Produce  json
+// @Param Authorization header string true "Authorization token" example({{token}})
+// @Success 200 {object} interceptor.ResponseSuccess[[]model.User]
+// @Failure 400 {object} interceptor.ResponseError
+// @Failure 401 {object} interceptor.ResponseError
+// @Failure 403 {object} interceptor.ResponseError
+// @router /user/getUserList [Get]
+func GetUserList(c *gin.Context) {
+	var users []model.User
+	global.GormDB.Not(model.User{Group: model.GroupAdmin}).Find(&users)
+	interceptor.Success(c, "success", users)
+}
+
+// ApproveRegistration godoc
+// @Summary ApproveRegistration
+// @Description Approve user registration
+// @Tags User
+// @Schemes http https
+// @Accept x-www-form-urlencoded
+// @Produce  json
+// @Param cid query string true "User id" example(1)
+// @Param Authorization header string true "Authorization token" example({{token}})
+// @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
+// @Failure 400 {object} interceptor.ResponseError
+// @Failure 401 {object} interceptor.ResponseError
+// @Failure 403 {object} interceptor.ResponseError
+// @router /user/approveRegistration [Get]
+func ApproveRegistration(c *gin.Context) {
+	cid := c.Query("cid")
+	if cid == "" {
+		interceptor.BadRequest(c, "User id cannot be empty", nil)
+		return
+	}
+	user := model.User{}
+	global.GormDB.Where("uid = ?", cid).First(&user)
+	if user.Uid == 0 {
+		interceptor.BadRequest(c, "User does not exist", nil)
+		return
+	}
+	user.Group = model.GroupUser
+	tx := global.GormDB.Begin()
+	if err := tx.Save(&user).Error; err != nil {
+		tx.Rollback()
+		interceptor.ServerError(c, "Failed to update user information")
+		return
+	}
+	if err := tx.Commit().Error; err != nil {
+		interceptor.ServerError(c, "Failed to update user information")
+		return
+	}
+	interceptor.Success(c, "success", interceptor.Empty{})
 }
 
 // updateToken Update token
