@@ -15,6 +15,19 @@ definitions:
         example: Invalid request
         type: string
     type: object
+  interceptor.ResponseSuccess-array_model_User:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.User'
+        type: array
+      message:
+        example: Success
+        type: string
+    type: object
   interceptor.ResponseSuccess-interceptor_Empty:
     properties:
       code:
@@ -50,41 +63,50 @@ definitions:
   model.User:
     properties:
       activated:
-        description: Activated 给一个默认的当前时间
+        description: User activation time
         example: "2021-07-01 00:00:00"
         type: string
       group:
         allOf:
         - $ref: '#/definitions/model.Group'
-        example: guest
+        description: User group
       logged:
+        description: User last login time
         example: "2021-07-01 00:00:00"
         type: string
       name:
+        description: User name
         example: admin
         type: string
       phone:
+        description: User phone number
         example: "18888888888"
         type: string
       screenName:
+        description: User nickname
         example: 罗拉
         type: string
       token:
+        description: User token
         example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjEsIm5hbWUiOiJhZG1pbiIsImV4cCI6MTYyNjMwNzQwMCwiaWF0IjoxNjI2MzA3MjAwfQ
         type: string
       uid:
+        description: User ID
         example: 1
         type: integer
       url:
+        description: User url
         example: https://www.luola.me
         type: string
     type: object
   model.UserLogin:
     properties:
       name:
+        description: User name
         example: admin
         type: string
       password:
+        description: User password
         example: "123456"
         type: string
     required:
@@ -94,24 +116,31 @@ definitions:
   model.UserRegister:
     properties:
       code:
+        description: Verification code
         example: "123456"
         type: string
       confirmPassword:
+        description: Confirm password is the same as password
         example: "123456"
         type: string
       name:
+        description: User name
         example: admin
         type: string
       password:
+        description: User password
         example: "123456"
         type: string
       phone:
+        description: User phone number
         example: "18888888888"
         type: string
       screenName:
+        description: User nickname
         example: 罗拉
         type: string
       url:
+        description: User avatar
         example: https://www.luola.me
         type: string
     required:
@@ -120,6 +149,17 @@ definitions:
     - name
     - password
     - phone
+    type: object
+  model.UserUpdate:
+    properties:
+      screenName:
+        description: User nickname
+        example: 罗拉
+        type: string
+      url:
+        description: User url
+        example: https://www.luola.me
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -154,6 +194,46 @@ paths:
       summary: SentVerificationCode
       tags:
       - SMS
+  /user/approveRegistration:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Approve user registration
+      parameters:
+      - description: User id
+        example: "1"
+        in: query
+        name: cid
+        required: true
+        type: string
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: ApproveRegistration
+      tags:
+      - User
   /user/checkName:
     get:
       consumes:
@@ -208,6 +288,80 @@ paths:
           schema:
             $ref: '#/definitions/interceptor.ResponseError'
       summary: CheckPhone
+      tags:
+      - User
+  /user/getUserInfoById:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get user information by id
+      parameters:
+      - description: User id
+        example: "1"
+        in: query
+        name: uid
+        required: true
+        type: string
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: GetUserInfoById
+      tags:
+      - User
+  /user/getUserList:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get user list
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-array_model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: GetUserList
       tags:
       - User
   /user/info:
@@ -277,6 +431,7 @@ paths:
       description: User logout
       parameters:
       - description: Authorization token
+        example: '{{token}}'
         in: header
         name: Authorization
         required: true
@@ -327,6 +482,129 @@ paths:
           schema:
             $ref: '#/definitions/interceptor.ResponseError'
       summary: RegisterUser
+      tags:
+      - User
+  /user/updateUserInfo:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Update user information
+      parameters:
+      - description: User update data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserUpdate'
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: UpdateUserInfo
+      tags:
+      - User
+  /user/updateUserPassword:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Update user password
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: New password
+        example: "123456"
+        in: formData
+        maxLength: 20
+        minLength: 6
+        name: newPassword
+        required: true
+        type: string
+      - description: Verification code
+        example: "123456"
+        in: formData
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: UpdateUserPassword
+      tags:
+      - User
+  /user/updateUserPhone:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Update user phone number
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Phone number
+        example: "18888888888"
+        format: "18888888888"
+        in: formData
+        name: phone
+        required: true
+        type: string
+      - description: Verification code
+        example: "123456"
+        in: formData
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: UpdateUserPhone
       tags:
       - User
 schemes:
