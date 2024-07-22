@@ -57,3 +57,28 @@ func AdminAuthority() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func NotGustAuthority() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		claims, ok := c.Get("claims")
+		if !ok {
+			interceptor.Unauthorized(c, "Unauthorized")
+			c.Abort()
+			return
+		}
+		jwtClaims := claims.(util.JwtCustomClaims)
+		user := model.User{}
+		global.GormDB.Where("uid = ?", jwtClaims.ID).First(&user)
+		if user.Uid == 0 {
+			interceptor.Unauthorized(c, "Unauthorized")
+			c.Abort()
+			return
+		}
+		if user.Group == model.GroupGuest {
+			interceptor.Forbidden(c, "Forbidden")
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
