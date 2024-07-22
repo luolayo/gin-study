@@ -23,7 +23,7 @@ func GetGorm() *gorm.DB {
 	}
 	sqlDb.SetMaxIdleConns(10)
 	sqlDb.SetMaxOpenConns(100)
-	sqlDb.SetConnMaxLifetime(time.Hour * 5)
+	sqlDb.SetConnMaxLifetime(time.Second * 60)
 	return db
 }
 
