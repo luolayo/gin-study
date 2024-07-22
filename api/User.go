@@ -10,78 +10,15 @@ import (
 	"time"
 )
 
-// RegisterUser godoc
-// @Summary RegisterUser
-// @Description Register user
-// @Tags User
-// @Schemes http https
-// @Accept x-www-form-urlencoded
-// @Produce  json
-// @Param data body model.UserRegister true "User registration data"
-// @Success 200 {object} interceptor.ResponseSuccess[model.User]
-// @Failure 400 {object} interceptor.ResponseError
-// @Failure 500 {object} interceptor.ResponseError
-// @router /user/register [Post]
-func RegisterUser(c *gin.Context) {
-
-	userReigster := model.UserRegister{}
-	if err := c.ShouldBind(&userReigster); err != nil {
-		interceptor.BadRequest(c, "Invalid request", interceptor.ValidateErr(err))
-		return
-	}
-	userModel := global.GormDB.Model(&model.User{})
-	if userModel.Where("name = ?", userReigster.Name).First(&model.User{}).RowsAffected > 0 {
-		interceptor.BadRequest(c, "User already exists", nil)
-		return
-	}
-	if userModel.Where("phone = ?", userReigster.Phone).First(&model.User{}).RowsAffected > 0 {
-		interceptor.BadRequest(c, "Phone number already exists", nil)
-		return
-	}
-	if userReigster.Password != userReigster.ConfirmPassword {
-		interceptor.BadRequest(c, "Password does not match", nil)
-		return
-	}
-	if err := verifyCode.NewSms().CheckVerificationCode(userReigster.Phone, userReigster.Code); err != nil {
-		interceptor.BadRequest(c, "Verification code error", nil)
-		return
-	}
-	encryptPassword, err := util.Encrypt(userReigster.Password)
-	if err != nil {
-		interceptor.ServerError(c, "Failed to encrypt password")
-		return
-	}
-	user := model.User{
-		Name:       userReigster.Name,
-		Password:   encryptPassword,
-		Phone:      userReigster.Phone,
-		Url:        userReigster.Url,
-		ScreenName: userReigster.ScreenName,
-	}
-	tx := global.GormDB.Begin()
-	if err := tx.Create(&user).Error; err != nil {
-		tx.Rollback()
-		interceptor.ServerError(c, "Failed to create user")
-		return
-	}
-	if err := tx.Commit().Error; err != nil {
-		interceptor.ServerError(c, "Failed to create user")
-		return
-	}
-	token, _ := util.CreateToken(user)
-	user.Token = token
-	interceptor.Success(c, "Register success", user)
-}
-
-// CheckPhone godoc
 // CheckPhone godoc
 // @Summary CheckPhone
-// @Description check phone number availability
+// @Description Before registering a user, the front-end needs to check if the phone already exists.
+// @Description If the phone already exists, the front-end should prevent the use of that phone to continue registration in order to reduce API requests.
 // @Tags User
 // @Schemes http https
 // @Accept x-www-form-urlencoded
 // @Produce  json
-// @Param phone query string true "UserPhone" length(11) example(18888888888) Format(18888888888)
+// @Param phone query string true "UserPhone" length(11) example(18888888888)
 // @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
 // @Failure 400 {object} interceptor.ResponseError
 // @router /user/checkPhone [Get]
@@ -92,6 +29,7 @@ func CheckPhone(c *gin.Context) {
 		interceptor.BadRequest(c, "Phone number cannot be empty", nil)
 		return
 	}
+	// Retrieve data from the database. If the data is not empty, it is registered
 	if global.GormDB.Model(&model.User{}).Where("phone = ?", phone).First(&model.User{}).RowsAffected > 0 {
 		interceptor.BadRequest(c, "Phone number already exists", nil)
 		return
@@ -100,9 +38,9 @@ func CheckPhone(c *gin.Context) {
 }
 
 // CheckName godoc
-// RegisterUser godoc
 // @Summary CheckName
-// @Description check username availability
+// @Description Before registering a user, the front-end needs to check if the username already exists.
+// @Description If the username already exists, the front-end should prevent the use of that username to continue registration in order to reduce API requests.
 // @Tags User
 // @Schemes http https
 // @Accept x-www-form-urlencoded
@@ -118,11 +56,130 @@ func CheckName(c *gin.Context) {
 		interceptor.BadRequest(c, "User name cannot be empty", nil)
 		return
 	}
+	// Retrieve data from the database. If the data is not empty, it is registered
 	if global.GormDB.Model(&model.User{}).Where("name = ?", name).First(&model.User{}).RowsAffected > 0 {
 		interceptor.BadRequest(c, "User name already exists", nil)
 		return
 	}
 	interceptor.Success(c, "User name can be used", interceptor.Empty{})
+}
+
+// RegisterUser godoc
+// @Summary RegisterUser
+// @Description User Registration API. The user registration API is used to register a new user.
+// @Description be careful! The front-end should perform verification before requesting APIs, such as checking if the phone number and username already exist.
+// @Tags User
+// @Schemes http https
+// @Accept x-www-form-urlencoded
+// @Produce  json
+// @Param data body model.UserRegister true "User registration data"
+// @Success 200 {object} interceptor.ResponseSuccess[model.User]
+// @Failure 400 {object} interceptor.ResponseError
+// @Failure 500 {object} interceptor.ResponseError
+// @router /user/register [Post]
+func RegisterUser(c *gin.Context) {
+	userReigster := model.UserRegister{}
+	// Verify the request data
+	if err := c.ShouldBind(&userReigster); err != nil {
+		interceptor.BadRequest(c, "Invalid request", interceptor.ValidateErr(err))
+		return
+	}
+	// Check if user information is duplicated
+	userModel := global.GormDB.Model(&model.User{})
+	if userModel.Where("name = ?", userReigster.Name).First(&model.User{}).RowsAffected > 0 {
+		interceptor.BadRequest(c, "User already exists", nil)
+		return
+	}
+	if userModel.Where("phone = ?", userReigster.Phone).First(&model.User{}).RowsAffected > 0 {
+		interceptor.BadRequest(c, "Phone number already exists", nil)
+		return
+	}
+	// Check if the password is the same
+	// These checks should be done by the front-end, with a secondary check by the back-end to reduce the possibility of errors
+	if userReigster.Password != userReigster.ConfirmPassword {
+		interceptor.BadRequest(c, "Password does not match", nil)
+		return
+	}
+	if err := verifyCode.NewSms().CheckVerificationCode(userReigster.Phone, userReigster.Code); err != nil {
+		interceptor.BadRequest(c, "Verification code error", nil)
+		return
+	}
+	// Encrypt the password.
+	// The password encryption function is located in the util/jwt.go file, and the corresponding environment variables should be filled in according to this file
+	encryptPassword, err := util.Encrypt(userReigster.Password)
+	if err != nil {
+		interceptor.ServerError(c, "Failed to encrypt password")
+		return
+	}
+	user := model.User{
+		Name:       userReigster.Name,
+		Password:   encryptPassword,
+		Phone:      userReigster.Phone,
+		Url:        userReigster.Url,
+		ScreenName: userReigster.ScreenName,
+	}
+	// Using transactions to handle database addition operations
+	tx := global.GormDB.Begin()
+	if err := tx.Create(&user).Error; err != nil {
+		tx.Rollback()
+		interceptor.ServerError(c, "Failed to create user")
+		return
+	}
+	// If there are no issues, submit the transaction; if there are issues, roll back to ensure that the data is error free
+	if err := tx.Commit().Error; err != nil {
+		interceptor.ServerError(c, "Failed to create user")
+		return
+	}
+	// In theory, we should only create tokens when logging in, but to reduce API calls,
+	// we also create tokens directly during registration and return them,
+	// allowing users to use the system without logging in again
+	token, _ := util.CreateToken(user)
+	user.Token = token
+	interceptor.Success(c, "Register success", user)
+}
+
+// UserLogin godoc
+// @Summary UserLogin
+// @Description User login
+// @Tags User
+// @Schemes http https
+// @Accept x-www-form-urlencoded
+// @Produce  json
+// @Param data body model.UserLogin true "User login data"
+// @Success 200 {object} interceptor.ResponseSuccess[model.User]
+// @Failure 400 {object} interceptor.ResponseError
+// @Failure 500 {object} interceptor.ResponseError
+// @router /user/login [Post]
+func UserLogin(c *gin.Context) {
+	userLogin := model.UserLogin{}
+	// Verify the request data
+	if err := c.ShouldBind(&userLogin); err != nil {
+		interceptor.BadRequest(c, "Invalid request", interceptor.ValidateErr(err))
+		return
+	}
+	// Check if the user exists
+	user := model.User{}
+	global.GormDB.Where("name = ?", userLogin.Name).First(&user)
+	if user.Uid == 0 {
+		interceptor.BadRequest(c, "User does not exist", nil)
+		return
+	}
+	if ok, _ := util.Compare(user.Password, userLogin.Password); !ok {
+		interceptor.BadRequest(c, "Password error", nil)
+		return
+	}
+	token, err := util.CreateToken(user)
+	if err != nil {
+		global.LOG.Error("Failed to create token %v", err)
+		interceptor.ServerError(c, "Failed to create token")
+		return
+	}
+	user.Token = token
+	// Update login time
+	t := time.Now()
+	user.Logged = &t
+	global.GormDB.Save(&user)
+	interceptor.Success(c, "Login success", user)
 }
 
 // UserInfo godoc
@@ -151,11 +208,10 @@ func UserInfo(c *gin.Context) {
 		return
 	}
 	updateToken(&user, jwtClaims)
-	global.LOG.Info("User information: %v", user)
 	tx := global.GormDB.Begin()
+	// Update the last active time
 	t := time.Now()
 	user.Activated = &t
-	global.LOG.Info("User information: %v", user)
 	if err := tx.Save(&user).Error; err != nil {
 		tx.Rollback()
 		interceptor.ServerError(c, "Failed to update user information")
@@ -166,48 +222,6 @@ func UserInfo(c *gin.Context) {
 		return
 	}
 	interceptor.Success(c, "success", user)
-}
-
-// UserLogin godoc
-// @Summary UserLogin
-// @Description User login
-// @Tags User
-// @Schemes http https
-// @Accept x-www-form-urlencoded
-// @Produce  json
-// @Param data body model.UserLogin true "User login data"
-// @Success 200 {object} interceptor.ResponseSuccess[model.User]
-// @Failure 400 {object} interceptor.ResponseError
-// @Failure 500 {object} interceptor.ResponseError
-// @router /user/login [Post]
-func UserLogin(c *gin.Context) {
-	userLogin := model.UserLogin{}
-	if err := c.ShouldBind(&userLogin); err != nil {
-		interceptor.BadRequest(c, "Invalid request", interceptor.ValidateErr(err))
-		return
-	}
-	user := model.User{}
-	global.GormDB.Where("name = ?", userLogin.Name).First(&user)
-	if user.Uid == 0 {
-		interceptor.BadRequest(c, "User does not exist", nil)
-		return
-	}
-	if ok, _ := util.Compare(user.Password, userLogin.Password); !ok {
-		interceptor.BadRequest(c, "Password error", nil)
-		return
-	}
-	token, err := util.CreateToken(user)
-	if err != nil {
-		global.LOG.Error("Failed to create token %v", err)
-		interceptor.ServerError(c, "Failed to create token")
-		return
-	}
-	user.Token = token
-	// Update login time
-	t := time.Now()
-	user.Logged = &t
-	global.GormDB.Save(&user)
-	interceptor.Success(c, "Login success", user)
 }
 
 // UserLogout godoc
@@ -235,6 +249,7 @@ func UserLogout(c *gin.Context) {
 		interceptor.Unauthorized(c, "Unauthorized")
 		return
 	}
+	// Delete token from redis
 	err := global.Redis.Del(jwtClaims.Name)
 	global.LOG.Info("Delete token %v", jwtClaims.Name)
 	if err != nil {
@@ -245,38 +260,9 @@ func UserLogout(c *gin.Context) {
 	interceptor.Success(c, "Logout success", interceptor.Empty{})
 }
 
-// GetUserInfoById godoc
-// @Summary GetUserInfoById
-// @Description Get user information by id
-// @Tags User
-// @Schemes http https
-// @Accept x-www-form-urlencoded
-// @Produce  json
-// @Param uid query string true "User id" example(1)
-// @Param Authorization header string true "Authorization token" example({{token}})
-// @Success 200 {object} interceptor.ResponseSuccess[model.User]
-// @Failure 400 {object} interceptor.ResponseError
-// @Failure 401 {object} interceptor.ResponseError
-// @Failure 403 {object} interceptor.ResponseError
-// @router /user/getUserInfoById [Get]
-func GetUserInfoById(c *gin.Context) {
-	uid := c.Query("uid")
-	if uid == "" {
-		interceptor.BadRequest(c, "User id cannot be empty", nil)
-		return
-	}
-	user := model.User{}
-	global.GormDB.Where("uid = ?", uid).First(&user)
-	if user.Uid == 0 {
-		interceptor.BadRequest(c, "User does not exist", nil)
-		return
-	}
-	interceptor.Success(c, "success", user)
-}
-
 // UpdateUserInfo godoc
 // @Summary UpdateUserInfo
-// @Description Update user information
+// @Description Update the user information API, which can partially transmit the information that needs to be updated, or transmit all the information that needs to be updated
 // @Tags User
 // @Schemes http https
 // @Accept x-www-form-urlencoded
@@ -286,7 +272,7 @@ func GetUserInfoById(c *gin.Context) {
 // @Success 200 {object} interceptor.ResponseSuccess[model.User]
 // @Failure 400 {object} interceptor.ResponseError
 // @Failure 401 {object} interceptor.ResponseError
-// @router /user/updateUserInfo [Post]
+// @router /user/updateUserInfo [Put]
 func UpdateUserInfo(c *gin.Context) {
 	userUpdate := model.UserUpdate{}
 	if err := c.ShouldBind(&userUpdate); err != nil {
@@ -305,6 +291,7 @@ func UpdateUserInfo(c *gin.Context) {
 		interceptor.Unauthorized(c, "Unauthorized")
 		return
 	}
+	// Update whatever content is uploaded
 	if userUpdate.Url != "" {
 		user.Url = userUpdate.Url
 	}
@@ -327,7 +314,7 @@ func UpdateUserInfo(c *gin.Context) {
 
 // UpdateUserPassword godoc
 // @Summary UpdateUserPassword
-// @Description Update user password
+// @Description Before users can change their password, they need to send a verification code, which can only be updated after successful verification
 // @Tags User
 // @Schemes http https
 // @Accept x-www-form-urlencoded
@@ -338,9 +325,10 @@ func UpdateUserInfo(c *gin.Context) {
 // @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
 // @Failure 400 {object} interceptor.ResponseError
 // @Failure 401 {object} interceptor.ResponseError
-// @router /user/updateUserPassword [Post]
+// @router /user/updateUserPassword [Patch]
 func UpdateUserPassword(c *gin.Context) {
 	newPassword := c.PostForm("newPassword")
+	// Updating password requires verifying phone number
 	code := c.PostForm("code")
 	if newPassword == "" {
 		interceptor.BadRequest(c, "New password cannot be empty", nil)
@@ -387,7 +375,7 @@ func UpdateUserPassword(c *gin.Context) {
 
 // UpdateUserPhone godoc
 // @Summary UpdateUserPhone
-// @Description Update user phone number
+// @Description Users need to verify the new phone number before updating their phone number
 // @Tags User
 // @Schemes http https
 // @Accept x-www-form-urlencoded
@@ -398,7 +386,7 @@ func UpdateUserPassword(c *gin.Context) {
 // @Success 200 {object} interceptor.ResponseSuccess[interceptor.Empty]
 // @Failure 400 {object} interceptor.ResponseError
 // @Failure 401 {object} interceptor.ResponseError
-// @router /user/updateUserPhone [Post]
+// @router /user/updateUserPhone [Patch]
 func UpdateUserPhone(c *gin.Context) {
 	phone := c.PostForm("phone")
 	code := c.PostForm("code")
@@ -440,9 +428,42 @@ func UpdateUserPhone(c *gin.Context) {
 	interceptor.Success(c, "success", interceptor.Empty{})
 }
 
+/*
+ * The following APIs require administrator privileges and are operations performed by administrators
+ */
+
+// GetUserInfoById godoc
+// @Summary GetUserInfoById
+// @Description Get user information by id
+// @Tags User
+// @Schemes http https
+// @Accept x-www-form-urlencoded
+// @Produce  json
+// @Param uid query string true "User id" example(1)
+// @Param Authorization header string true "Authorization token" example({{token}})
+// @Success 200 {object} interceptor.ResponseSuccess[model.User]
+// @Failure 400 {object} interceptor.ResponseError
+// @Failure 401 {object} interceptor.ResponseError
+// @Failure 403 {object} interceptor.ResponseError
+// @router /user/getUserInfoById [Get]
+func GetUserInfoById(c *gin.Context) {
+	uid := c.Query("uid")
+	if uid == "" {
+		interceptor.BadRequest(c, "User id cannot be empty", nil)
+		return
+	}
+	user := model.User{}
+	global.GormDB.Where("uid = ?", uid).First(&user)
+	if user.Uid == 0 {
+		interceptor.BadRequest(c, "User does not exist", nil)
+		return
+	}
+	interceptor.Success(c, "success", user)
+}
+
 // GetUserList godoc
 // @Summary GetUserList
-// @Description Get user list
+// @Description Due to the default registration of users as tourists, administrator review is required, and all users can be queried through this API
 // @Tags User
 // @Schemes http https
 // @Accept x-www-form-urlencoded
@@ -455,6 +476,7 @@ func UpdateUserPhone(c *gin.Context) {
 // @router /user/getUserList [Get]
 func GetUserList(c *gin.Context) {
 	var users []model.User
+	// Query all users except administrators
 	global.GormDB.Not(model.User{Group: model.GroupAdmin}).Find(&users)
 	interceptor.Success(c, "success", users)
 }
