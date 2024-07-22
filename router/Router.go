@@ -15,6 +15,8 @@ func GetRouter() *gin.Engine {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router := r.Group("/user")
 	UserRoutes(router)
+	router = r.Group("/content")
+	ContentRoutes(router)
 	router = r.Group("/SMS")
 	SMSRoutes(router)
 	return r
