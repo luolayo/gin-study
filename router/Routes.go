@@ -34,15 +34,24 @@ func SMSRoutes(r *gin.RouterGroup) {
 }
 
 func ContentRoutes(r *gin.RouterGroup) {
-	r.GET("/:id", api.GetContent)
-	r.GET("/post", api.GetPostContentList)
-	r.GET("/page", api.GetPageContentList)
-	r.GET("/attachment/:id", api.GetAttachmentContentList)
+	// Some APIs for obtaining content, the following APIs do not require login permission
+	r.GET("/:id", api.GetContent)                          // get content by id
+	r.GET("/post", api.GetPostContentList)                 // get post content list
+	r.GET("/page", api.GetPageContentList)                 // get page content list
+	r.GET("/attachment/:id", api.GetAttachmentContentList) // get attachment content list by post id or page id
+	// Use middleware to check if the user is logged in.
+	// The following API requires users to have login credentials
 	r.Use(middleware.Authentication())
-	r.PUT("/:id", api.UpdateContent)
+	r.PUT("/:id", api.UpdateContent)   // update content by id
+	r.GET("/", api.GetUserContentList) // Query the articles logged in by the current user
+	// Use middleware to check if the user is not a guest
+	// The following API requires users to have normal user and above permissions
 	r.Use(middleware.NotGustAuthority())
-	r.POST("/", api.CreateContent)
-	r.DELETE("/:id", api.DeleteContent)
+	r.POST("/", api.CreateContent)      // create content
+	r.DELETE("/:id", api.DeleteContent) // delete content by id
+	// use middleware to check if the user is an administrator
+	// The following API requires users to have administrator privileges
 	r.Use(middleware.AdminAuthority())
+	r.GET("/approve/:id", api.ApproveRelease) // approve content by id
 
 }

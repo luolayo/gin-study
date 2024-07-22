@@ -10,62 +10,6 @@ import (
 	"time"
 )
 
-// CreateContent godoc
-// @Summary Create a new content
-// @Description Create a new content
-// @Tags Content
-// @Accept x-www-form-urlencoded
-// @Produce json
-// @Param Authorization header string true " Authorization token" example({{token}})
-// @Param data body model.ContentRequest true "Content data"
-// @Success 200 {object} interceptor.ResponseSuccess[model.Content]
-// @Failure 400 {object} interceptor.ResponseError
-// @Failure 401 {object} interceptor.ResponseError
-// @Failure 500 {object} interceptor.ResponseError
-// @Router /content [post]
-func CreateContent(c *gin.Context) {
-	contentRequest := model.ContentRequest{}
-	content := model.Content{}
-	if err := c.ShouldBind(&contentRequest); err != nil {
-		interceptor.BadRequest(c, "Invalid request", interceptor.ValidateErr(err))
-		return
-	}
-	claims, ok := c.Get("claims")
-	if !ok {
-		interceptor.Unauthorized(c, "Unauthorized")
-		return
-	}
-	jwtClaims := claims.(util.JwtCustomClaims)
-	user := model.User{}
-	global.GormDB.Where("id = ?", jwtClaims.ID).First(&user)
-	switch checkContentType(contentRequest.Type) {
-	case model.TypePost:
-		content = createContentTypeIsPost(&contentRequest, jwtClaims.ID)
-	case model.TypePage:
-		if user.Group != model.GroupAdmin {
-			interceptor.Forbidden(c, "You are not allowed to create page content")
-			return
-		}
-		content = createContentTypeIsPage(&contentRequest, jwtClaims.ID)
-	case model.TypeAttachment:
-		content = createContentTypeIsAttachment(&contentRequest, jwtClaims.ID)
-	default:
-		interceptor.BadRequest(c, "Invalid content type", nil)
-	}
-	tx := global.GormDB.Begin()
-	if err := tx.Create(&content).Error; err != nil {
-		tx.Rollback()
-		interceptor.ServerError(c, "Create content failed")
-		return
-	}
-	if err := tx.Commit().Error; err != nil {
-		tx.Rollback()
-		interceptor.ServerError(c, "Create content failed")
-		return
-	}
-	interceptor.Success(c, "Create content success", content)
-}
-
 // GetContent godoc
 // @Summary Get content by id
 // @Description Get content by id
@@ -117,11 +61,11 @@ func GetPageContentList(c *gin.Context) {
 
 // GetAttachmentContentList godoc
 // @Summary Get attachment content list
-// @Description Get attachment content list
+// @Description get attachment content list by post id or page id
 // @Tags Content
 // @Accept x-www-form-urlencoded
 // @Produce json
-// @Param id path string true "Content ID" example(1)
+// @Param id path string true "use page id or post id" example(1)
 // @Success 200 {object} interceptor.ResponseSuccess[model.Content]
 // @Router /content/attachment/{id} [get]
 func GetAttachmentContentList(c *gin.Context) {
@@ -133,7 +77,7 @@ func GetAttachmentContentList(c *gin.Context) {
 
 // UpdateContent godoc
 // @Summary Update content by id
-// @Description Update content by id
+// @Description Only allow modification of one's own article, or the administrator allows modification of all articles
 // @Tags Content
 // @Accept x-www-form-urlencoded
 // @Produce json
@@ -198,6 +142,84 @@ func UpdateContent(c *gin.Context) {
 	interceptor.Success(c, "Update content success", interceptor.Empty{})
 }
 
+// GetUserContentList godoc
+// @Summary Get user content list
+// @Description Query the articles logged in by the current user
+// @Tags Content
+// @Accept x-www-form-urlencoded
+// @Produce json
+// @Param Authorization header string true " Authorization token" example({{token}})
+// @Success 200 {object} interceptor.ResponseSuccess[[]model.Content]
+// @Failure 401 {object} interceptor.ResponseError
+// @Router /content [get]
+func GetUserContentList(c *gin.Context) {
+	claims, ok := c.Get("claims")
+	if !ok {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	jwtClaims := claims.(util.JwtCustomClaims)
+	var content []model.Content
+	global.GormDB.Where("author_id = ?", jwtClaims.ID).Find(&content)
+	interceptor.Success(c, "Get content list success", content)
+}
+
+// CreateContent godoc
+// @Summary Create a new content
+// @Description Create a new content
+// @Tags Content
+// @Accept x-www-form-urlencoded
+// @Produce json
+// @Param Authorization header string true " Authorization token" example({{token}})
+// @Param data body model.ContentRequest true "Content data"
+// @Success 200 {object} interceptor.ResponseSuccess[model.Content]
+// @Failure 400 {object} interceptor.ResponseError
+// @Failure 401 {object} interceptor.ResponseError
+// @Failure 500 {object} interceptor.ResponseError
+// @Router /content [post]
+func CreateContent(c *gin.Context) {
+	contentRequest := model.ContentRequest{}
+	content := model.Content{}
+	if err := c.ShouldBind(&contentRequest); err != nil {
+		interceptor.BadRequest(c, "Invalid request", interceptor.ValidateErr(err))
+		return
+	}
+	claims, ok := c.Get("claims")
+	if !ok {
+		interceptor.Unauthorized(c, "Unauthorized")
+		return
+	}
+	jwtClaims := claims.(util.JwtCustomClaims)
+	user := model.User{}
+	global.GormDB.Where("id = ?", jwtClaims.ID).First(&user)
+	switch checkContentType(contentRequest.Type) {
+	case model.TypePost:
+		content = createContentTypeIsPost(&contentRequest, jwtClaims.ID)
+	case model.TypePage:
+		if user.Group != model.GroupAdmin {
+			interceptor.Forbidden(c, "You are not allowed to create page content")
+			return
+		}
+		content = createContentTypeIsPage(&contentRequest, jwtClaims.ID)
+	case model.TypeAttachment:
+		content = createContentTypeIsAttachment(&contentRequest, jwtClaims.ID)
+	default:
+		interceptor.BadRequest(c, "Invalid content type", nil)
+	}
+	tx := global.GormDB.Begin()
+	if err := tx.Create(&content).Error; err != nil {
+		tx.Rollback()
+		interceptor.ServerError(c, "Create content failed")
+		return
+	}
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		interceptor.ServerError(c, "Create content failed")
+		return
+	}
+	interceptor.Success(c, "Create content success", content)
+}
+
 // DeleteContent godoc
 // @Summary Delete content by id
 // @Description Delete content by id
@@ -259,6 +281,7 @@ func DeleteContent(c *gin.Context) {
 // @Failure 401 {object} interceptor.ResponseError
 // @Failure 404 {object} interceptor.ResponseError
 // @Failure 500 {object} interceptor.ResponseError
+// @Router /content/approve/{id} [Get]
 func ApproveRelease(c *gin.Context) {
 	id := c.Param("id")
 	if id == "" {
