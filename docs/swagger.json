@@ -50,6 +50,748 @@
                 }
             }
         },
+        "/comment/approve/{id}": {
+            "get": {
+                "description": "Approve comment",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Approve comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Comment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/comment/{id}": {
+            "get": {
+                "description": "Get comments",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Get comments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Content ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-array_model_Comment"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create comment",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Create comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Content ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Comment",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.CommentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_Comment"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete comment",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Delete comment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Comment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/content": {
+            "get": {
+                "description": "Query the articles logged in by the current user",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Content"
+                ],
+                "summary": "Get user content list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": " Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-array_model_Content"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new content",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Content"
+                ],
+                "summary": "Create a new content",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": " Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Content data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ContentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_Content"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/content/all": {
+            "get": {
+                "description": "Get post content list public",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Content"
+                ],
+                "summary": "Get post content list public",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-array_model_Content"
+                        }
+                    }
+                }
+            }
+        },
+        "/content/approve/{id}": {
+            "get": {
+                "description": "Approve release by id",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Content"
+                ],
+                "summary": "Approve release by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": " Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1",
+                        "description": "Content ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/content/attachment/{id}": {
+            "get": {
+                "description": "get attachment content list by post id or page id",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Content"
+                ],
+                "summary": "Get attachment content list",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "1",
+                        "description": "use page id or post id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_Content"
+                        }
+                    }
+                }
+            }
+        },
+        "/content/page": {
+            "get": {
+                "description": "page post content list",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Content"
+                ],
+                "summary": "Get page content list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-array_model_Content"
+                        }
+                    }
+                }
+            }
+        },
+        "/content/post": {
+            "get": {
+                "description": "Get post content list",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Content"
+                ],
+                "summary": "Get post content list",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-array_model_Content"
+                        }
+                    }
+                }
+            }
+        },
+        "/content/{id}": {
+            "get": {
+                "description": "Get content by id",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Content"
+                ],
+                "summary": "Get content by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "1",
+                        "description": "Content ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-model_Content"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Only allow modification of one's own article, or the administrator allows modification of all articles",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Content"
+                ],
+                "summary": "Update content by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": " Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "1",
+                        "description": "Content ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Content data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ContentUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
+        "/link": {
+            "get": {
+                "description": "Get all links",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Link"
+                ],
+                "summary": "Get all approved links",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-array_model_Link"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a link",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Link"
+                ],
+                "summary": "Create a link",
+                "parameters": [
+                    {
+                        "description": "Link",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LinkRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    }
+                }
+            }
+        },
+        "/link/all": {
+            "get": {
+                "description": "Get all links",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Link"
+                ],
+                "summary": "admin Get all links",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-array_model_Link"
+                        }
+                    }
+                }
+            }
+        },
+        "/link/approve/{id}": {
+            "patch": {
+                "description": "Approve a link",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Link"
+                ],
+                "summary": "Approve a link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Link ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    }
+                }
+            }
+        },
+        "/link/{id}": {
+            "put": {
+                "description": "Update a link",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Link"
+                ],
+                "summary": "Update a link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Link ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Link",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.LinkUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete a link",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Link"
+                ],
+                "summary": "Delete a link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Link ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-interceptor_Empty"
+                        }
+                    }
+                }
+            }
+        },
         "/user/approveRegistration": {
             "get": {
                 "description": "Approve user registration",
@@ -111,7 +853,7 @@
         },
         "/user/checkName": {
             "get": {
-                "description": "check username availability",
+                "description": "Before registering a user, the front-end needs to check if the username already exists.\nIf the username already exists, the front-end should prevent the use of that username to continue registration in order to reduce API requests.",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -153,7 +895,7 @@
         },
         "/user/checkPhone": {
             "get": {
-                "description": "check phone number availability",
+                "description": "Before registering a user, the front-end needs to check if the phone already exists.\nIf the phone already exists, the front-end should prevent the use of that phone to continue registration in order to reduce API requests.",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -167,7 +909,6 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "format": "18888888888",
                         "example": "18888888888",
                         "description": "UserPhone",
                         "name": "phone",
@@ -252,7 +993,7 @@
         },
         "/user/getUserList": {
             "get": {
-                "description": "Get user list",
+                "description": "Due to the default registration of users as tourists, administrator review is required, and all users can be queried through this API",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -439,7 +1180,7 @@
         },
         "/user/register": {
             "post": {
-                "description": "Register user",
+                "description": "User Registration API. The user registration API is used to register a new user.\nbe careful! The front-end should perform verification before requesting APIs, such as checking if the phone number and username already exist.",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -484,8 +1225,8 @@
             }
         },
         "/user/updateUserInfo": {
-            "post": {
-                "description": "Update user information",
+            "put": {
+                "description": "Update the user information API, which can partially transmit the information that needs to be updated, or transmit all the information that needs to be updated",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -538,8 +1279,8 @@
             }
         },
         "/user/updateUserPassword": {
-            "post": {
-                "description": "Update user password",
+            "patch": {
+                "description": "Before users can change their password, they need to send a verification code, which can only be updated after successful verification",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -601,8 +1342,8 @@
             }
         },
         "/user/updateUserPhone": {
-            "post": {
-                "description": "Update user phone number",
+            "patch": {
+                "description": "Users need to verify the new phone number before updating their phone number",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -686,6 +1427,63 @@
                 }
             }
         },
+        "interceptor.ResponseSuccess-array_model_Comment": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Comment"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                }
+            }
+        },
+        "interceptor.ResponseSuccess-array_model_Content": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Content"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                }
+            }
+        },
+        "interceptor.ResponseSuccess-array_model_Link": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Link"
+                    }
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                }
+            }
+        },
         "interceptor.ResponseSuccess-array_model_User": {
             "type": "object",
             "properties": {
@@ -721,6 +1519,54 @@
                 }
             }
         },
+        "interceptor.ResponseSuccess-model_Comment": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "$ref": "#/definitions/model.Comment"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                }
+            }
+        },
+        "interceptor.ResponseSuccess-model_Content": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "$ref": "#/definitions/model.Content"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                }
+            }
+        },
+        "interceptor.ResponseSuccess-model_Link": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "$ref": "#/definitions/model.Link"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                }
+            }
+        },
         "interceptor.ResponseSuccess-model_User": {
             "type": "object",
             "properties": {
@@ -737,6 +1583,177 @@
                 }
             }
         },
+        "model.Comment": {
+            "type": "object",
+            "properties": {
+                "agent": {
+                    "type": "string"
+                },
+                "author": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "authorId": {
+                    "type": "integer"
+                },
+                "authorName": {
+                    "type": "string"
+                },
+                "cid": {
+                    "type": "integer"
+                },
+                "coid": {
+                    "type": "integer"
+                },
+                "content": {
+                    "$ref": "#/definitions/model.Content"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.CommentStatus"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.CommentRequest": {
+            "type": "object",
+            "required": [
+                "text"
+            ],
+            "properties": {
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.CommentStatus": {
+            "type": "string",
+            "enum": [
+                "approved",
+                "pending"
+            ],
+            "x-enum-varnames": [
+                "Approved",
+                "Pending"
+            ]
+        },
+        "model.Content": {
+            "type": "object",
+            "properties": {
+                "authorId": {
+                    "type": "integer"
+                },
+                "cid": {
+                    "type": "integer"
+                },
+                "commentsNum": {
+                    "type": "integer"
+                },
+                "created": {
+                    "type": "string"
+                },
+                "modified": {
+                    "type": "string"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "parent": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/model.ViewStatus"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/model.Type"
+                },
+                "views": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.ContentRequest": {
+            "type": "object",
+            "required": [
+                "text",
+                "title",
+                "type"
+            ],
+            "properties": {
+                "order": {
+                    "description": "Content Order",
+                    "type": "integer",
+                    "example": 0
+                },
+                "parent": {
+                    "description": "Content Parent",
+                    "type": "integer",
+                    "example": 0
+                },
+                "slug": {
+                    "description": "Content Slug",
+                    "type": "string",
+                    "example": "hello-world"
+                },
+                "text": {
+                    "description": "Content Text",
+                    "type": "string",
+                    "example": "Hello World"
+                },
+                "title": {
+                    "description": "Content Title",
+                    "type": "string",
+                    "example": "Hello World"
+                },
+                "type": {
+                    "description": "Content Type",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.Type"
+                        }
+                    ],
+                    "example": "post"
+                }
+            }
+        },
+        "model.ContentUpdate": {
+            "type": "object",
+            "properties": {
+                "order": {
+                    "description": "Order",
+                    "type": "integer",
+                    "example": 0
+                },
+                "text": {
+                    "description": "Content Text",
+                    "type": "string",
+                    "example": "Hello World"
+                },
+                "title": {
+                    "description": "Content Title",
+                    "type": "string",
+                    "example": "Hello World"
+                }
+            }
+        },
         "model.Group": {
             "type": "string",
             "enum": [
@@ -748,6 +1765,78 @@
                 "GroupAdmin",
                 "GroupUser",
                 "GroupGuest"
+            ]
+        },
+        "model.Link": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "stutas": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.LinkRequest": {
+            "type": "object",
+            "required": [
+                "avatar",
+                "name",
+                "url"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.LinkUpdate": {
+            "type": "object",
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Type": {
+            "type": "string",
+            "enum": [
+                "post",
+                "page",
+                "attachment"
+            ],
+            "x-enum-varnames": [
+                "TypePost",
+                "TypePage",
+                "TypeAttachment"
             ]
         },
         "model.User": {
@@ -883,6 +1972,17 @@
                     "example": "https://www.luola.me"
                 }
             }
+        },
+        "model.ViewStatus": {
+            "type": "string",
+            "enum": [
+                "private",
+                "public"
+            ],
+            "x-enum-varnames": [
+                "ViewStatusPrivate",
+                "ViewStatusPublic"
+            ]
         }
     }
 }

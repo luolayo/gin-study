@@ -15,6 +15,45 @@ definitions:
         example: Invalid request
         type: string
     type: object
+  interceptor.ResponseSuccess-array_model_Comment:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.Comment'
+        type: array
+      message:
+        example: Success
+        type: string
+    type: object
+  interceptor.ResponseSuccess-array_model_Content:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.Content'
+        type: array
+      message:
+        example: Success
+        type: string
+    type: object
+  interceptor.ResponseSuccess-array_model_Link:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.Link'
+        type: array
+      message:
+        example: Success
+        type: string
+    type: object
   interceptor.ResponseSuccess-array_model_User:
     properties:
       code:
@@ -39,6 +78,39 @@ definitions:
         example: Success
         type: string
     type: object
+  interceptor.ResponseSuccess-model_Comment:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/model.Comment'
+      message:
+        example: Success
+        type: string
+    type: object
+  interceptor.ResponseSuccess-model_Content:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/model.Content'
+      message:
+        example: Success
+        type: string
+    type: object
+  interceptor.ResponseSuccess-model_Link:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        $ref: '#/definitions/model.Link'
+      message:
+        example: Success
+        type: string
+    type: object
   interceptor.ResponseSuccess-model_User:
     properties:
       code:
@@ -48,6 +120,124 @@ definitions:
         $ref: '#/definitions/model.User'
       message:
         example: Success
+        type: string
+    type: object
+  model.Comment:
+    properties:
+      agent:
+        type: string
+      author:
+        $ref: '#/definitions/model.User'
+      authorId:
+        type: integer
+      authorName:
+        type: string
+      cid:
+        type: integer
+      coid:
+        type: integer
+      content:
+        $ref: '#/definitions/model.Content'
+      created:
+        type: integer
+      ip:
+        type: string
+      status:
+        $ref: '#/definitions/model.CommentStatus'
+      text:
+        type: string
+      url:
+        type: string
+    type: object
+  model.CommentRequest:
+    properties:
+      text:
+        type: string
+    required:
+    - text
+    type: object
+  model.CommentStatus:
+    enum:
+    - approved
+    - pending
+    type: string
+    x-enum-varnames:
+    - Approved
+    - Pending
+  model.Content:
+    properties:
+      authorId:
+        type: integer
+      cid:
+        type: integer
+      commentsNum:
+        type: integer
+      created:
+        type: string
+      modified:
+        type: string
+      order:
+        type: integer
+      parent:
+        type: integer
+      slug:
+        type: string
+      status:
+        $ref: '#/definitions/model.ViewStatus'
+      text:
+        type: string
+      title:
+        type: string
+      type:
+        $ref: '#/definitions/model.Type'
+      views:
+        type: integer
+    type: object
+  model.ContentRequest:
+    properties:
+      order:
+        description: Content Order
+        example: 0
+        type: integer
+      parent:
+        description: Content Parent
+        example: 0
+        type: integer
+      slug:
+        description: Content Slug
+        example: hello-world
+        type: string
+      text:
+        description: Content Text
+        example: Hello World
+        type: string
+      title:
+        description: Content Title
+        example: Hello World
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/model.Type'
+        description: Content Type
+        example: post
+    required:
+    - text
+    - title
+    - type
+    type: object
+  model.ContentUpdate:
+    properties:
+      order:
+        description: Order
+        example: 0
+        type: integer
+      text:
+        description: Content Text
+        example: Hello World
+        type: string
+      title:
+        description: Content Title
+        example: Hello World
         type: string
     type: object
   model.Group:
@@ -60,6 +250,55 @@ definitions:
     - GroupAdmin
     - GroupUser
     - GroupGuest
+  model.Link:
+    properties:
+      id:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+      sort:
+        type: integer
+      stutas:
+        type: integer
+      url:
+        type: string
+    type: object
+  model.LinkRequest:
+    properties:
+      avatar:
+        type: string
+      name:
+        type: string
+      url:
+        type: string
+    required:
+    - avatar
+    - name
+    - url
+    type: object
+  model.LinkUpdate:
+    properties:
+      avatar:
+        type: string
+      name:
+        type: string
+      sort:
+        type: integer
+      url:
+        type: string
+    type: object
+  model.Type:
+    enum:
+    - post
+    - page
+    - attachment
+    type: string
+    x-enum-varnames:
+    - TypePost
+    - TypePage
+    - TypeAttachment
   model.User:
     properties:
       activated:
@@ -161,6 +400,14 @@ definitions:
         example: https://www.luola.me
         type: string
     type: object
+  model.ViewStatus:
+    enum:
+    - private
+    - public
+    type: string
+    x-enum-varnames:
+    - ViewStatusPrivate
+    - ViewStatusPublic
 host: localhost:8080
 info:
   contact: {}
@@ -194,6 +441,502 @@ paths:
       summary: SentVerificationCode
       tags:
       - SMS
+  /comment/{id}:
+    delete:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Delete comment
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: Delete comment
+      tags:
+      - Comment
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get comments
+      parameters:
+      - description: Content ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-array_model_Comment'
+      summary: Get comments
+      tags:
+      - Comment
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Create comment
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Content ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Comment
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.CommentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_Comment'
+      summary: Create comment
+      tags:
+      - Comment
+  /comment/approve/{id}:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Approve comment
+      parameters:
+      - description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: Approve comment
+      tags:
+      - Comment
+  /content:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Query the articles logged in by the current user
+      parameters:
+      - description: ' Authorization token'
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-array_model_Content'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: Get user content list
+      tags:
+      - Content
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Create a new content
+      parameters:
+      - description: ' Authorization token'
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Content data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.ContentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_Content'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: Create a new content
+      tags:
+      - Content
+  /content/{id}:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get content by id
+      parameters:
+      - description: Content ID
+        example: "1"
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_Content'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: Get content by id
+      tags:
+      - Content
+    put:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Only allow modification of one's own article, or the administrator
+        allows modification of all articles
+      parameters:
+      - description: ' Authorization token'
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Content ID
+        example: "1"
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Content data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.ContentUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: Update content by id
+      tags:
+      - Content
+  /content/all:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get post content list public
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-array_model_Content'
+      summary: Get post content list public
+      tags:
+      - Content
+  /content/approve/{id}:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Approve release by id
+      parameters:
+      - description: ' Authorization token'
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Content ID
+        example: "1"
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/interceptor.ResponseError'
+      summary: Approve release by id
+      tags:
+      - Content
+  /content/attachment/{id}:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: get attachment content list by post id or page id
+      parameters:
+      - description: use page id or post id
+        example: "1"
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-model_Content'
+      summary: Get attachment content list
+      tags:
+      - Content
+  /content/page:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: page post content list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-array_model_Content'
+      summary: Get page content list
+      tags:
+      - Content
+  /content/post:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get post content list
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-array_model_Content'
+      summary: Get post content list
+      tags:
+      - Content
+  /link:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get all links
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-array_model_Link'
+      summary: Get all approved links
+      tags:
+      - Link
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Create a link
+      parameters:
+      - description: Link
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.LinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+      summary: Create a link
+      tags:
+      - Link
+  /link/{id}:
+    delete:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Delete a link
+      parameters:
+      - description: Link ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+      summary: Delete a link
+      tags:
+      - Link
+    put:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Update a link
+      parameters:
+      - description: Link ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Link
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.LinkUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+      summary: Update a link
+      tags:
+      - Link
+  /link/all:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get all links
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-array_model_Link'
+      summary: admin Get all links
+      tags:
+      - Link
+  /link/approve/{id}:
+    patch:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Approve a link
+      parameters:
+      - description: Link ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-interceptor_Empty'
+      summary: Approve a link
+      tags:
+      - Link
   /user/approveRegistration:
     get:
       consumes:
@@ -238,7 +981,9 @@ paths:
     get:
       consumes:
       - application/x-www-form-urlencoded
-      description: check username availability
+      description: |-
+        Before registering a user, the front-end needs to check if the username already exists.
+        If the username already exists, the front-end should prevent the use of that username to continue registration in order to reduce API requests.
       parameters:
       - description: Username
         example: luolayo
@@ -267,11 +1012,12 @@ paths:
     get:
       consumes:
       - application/x-www-form-urlencoded
-      description: check phone number availability
+      description: |-
+        Before registering a user, the front-end needs to check if the phone already exists.
+        If the phone already exists, the front-end should prevent the use of that phone to continue registration in order to reduce API requests.
       parameters:
       - description: UserPhone
         example: "18888888888"
-        format: "18888888888"
         in: query
         name: phone
         required: true
@@ -334,7 +1080,8 @@ paths:
     get:
       consumes:
       - application/x-www-form-urlencoded
-      description: Get user list
+      description: Due to the default registration of users as tourists, administrator
+        review is required, and all users can be queried through this API
       parameters:
       - description: Authorization token
         example: '{{token}}'
@@ -458,7 +1205,9 @@ paths:
     post:
       consumes:
       - application/x-www-form-urlencoded
-      description: Register user
+      description: |-
+        User Registration API. The user registration API is used to register a new user.
+        be careful! The front-end should perform verification before requesting APIs, such as checking if the phone number and username already exist.
       parameters:
       - description: User registration data
         in: body
@@ -485,10 +1234,12 @@ paths:
       tags:
       - User
   /user/updateUserInfo:
-    post:
+    put:
       consumes:
       - application/x-www-form-urlencoded
-      description: Update user information
+      description: Update the user information API, which can partially transmit the
+        information that needs to be updated, or transmit all the information that
+        needs to be updated
       parameters:
       - description: User update data
         in: body
@@ -521,10 +1272,11 @@ paths:
       tags:
       - User
   /user/updateUserPassword:
-    post:
+    patch:
       consumes:
       - application/x-www-form-urlencoded
-      description: Update user password
+      description: Before users can change their password, they need to send a verification
+        code, which can only be updated after successful verification
       parameters:
       - description: Authorization token
         example: '{{token}}'
@@ -565,10 +1317,11 @@ paths:
       tags:
       - User
   /user/updateUserPhone:
-    post:
+    patch:
       consumes:
       - application/x-www-form-urlencoded
-      description: Update user phone number
+      description: Users need to verify the new phone number before updating their
+        phone number
       parameters:
       - description: Authorization token
         example: '{{token}}'
