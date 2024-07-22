@@ -31,9 +31,8 @@ type Content struct {
 	Parent      uint       `gorm:"default:0" json:"parent"`
 	Views       uint       `gorm:"default:0" json:"views"`
 
-	Author        User           `gorm:"foreignKey:AuthorId" json:"-"`
-	Comments      []Comment      `gorm:"foreignKey:Cid" json:"-"`
-	Relationships []Relationship `gorm:"foreignKey:Cid" json:"-"`
+	Author   User      `gorm:"foreignKey:AuthorId" json:"-"`
+	Comments []Comment `gorm:"foreignKey:Cid" json:"-"`
 }
 
 type ContentRequest struct {

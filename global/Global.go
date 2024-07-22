@@ -41,8 +41,6 @@ func AutoMigrate(db *gorm.DB) error {
 		&model.Content{},
 		&model.Comment{},
 		&model.Link{},
-		&model.Meta{},
 		&model.Option{},
-		&model.Relationship{},
 	)
 }

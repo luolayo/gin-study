@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/luolayo/gin-study/api"
+	"github.com/luolayo/gin-study/install"
 	"github.com/luolayo/gin-study/middleware"
 )
 
@@ -54,4 +55,40 @@ func ContentRoutes(r *gin.RouterGroup) {
 	r.Use(middleware.AdminAuthority())
 	r.GET("/approve/:id", api.ApproveRelease) // approve content by id
 
+}
+
+func CommentRoutes(r *gin.RouterGroup) {
+	// Some APIs for obtaining comments, the following APIs do not require login permission
+	r.GET("/:id", api.GetComments) // get comments by id
+
+	// Use middleware to check if the user is logged in.
+	// The following API requires users to have login credentials
+	r.Use(middleware.Authentication())
+	r.POST("/:id", api.CreateComment)   // create comment by id
+	r.DELETE("/:id", api.DeleteComment) // delete comment by id
+	r.Use(middleware.AdminAuthority())
+	r.GET("/approve/:id", api.ApproveComment) // approve comment by id
+}
+
+func LinkRoutes(r *gin.RouterGroup) {
+	r.GET("/", api.GetLinks)       // get link
+	r.GET("/:id", api.GetLinkById) // get link by id
+
+	// Use middleware to check if the user is logged in.
+	// The following API requires users to have login credentials
+	r.Use(middleware.Authentication())
+	r.POST("/", api.CreateLink) // create link
+
+	// use middleware to check if the user is an administrato
+	// The following API requires users to have administrator privileges
+	r.Use(middleware.AdminAuthority())
+	r.PUT("/:id", api.UpdateLink)            // admin update link by id
+	r.DELETE("/:id", api.DeleteLink)         // admin delete link by id
+	r.PATCH("/approve/:id", api.ApproveLink) // admin approve link by id
+	r.GET("/all", api.GetLink)               // admin get link
+}
+
+func InstallRoutes(r *gin.RouterGroup) {
+	r.GET("/", install.ApplicationInitialization) // check mysql and redis connection
+	r.POST("/createAdminUser", install.CreateAdminUser)
 }
