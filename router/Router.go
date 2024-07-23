@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/luolayo/gin-study/api"
 	"github.com/luolayo/gin-study/global"
 	"github.com/luolayo/gin-study/middleware"
 	swaggerFiles "github.com/swaggo/files"
@@ -16,6 +17,7 @@ func GetRouter() *gin.Engine {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.Use(middleware.CheckInstalled())
 	r.Static("/static", "./static")
+	r.POST("/upload", api.Upload)
 	router := r.Group("/user")
 	UserRoutes(router)
 	router = r.Group("/content")

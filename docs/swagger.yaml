@@ -122,6 +122,17 @@ definitions:
         example: Success
         type: string
     type: object
+  interceptor.ResponseSuccess-string:
+    properties:
+      code:
+        example: 200
+        type: integer
+      data:
+        type: string
+      message:
+        example: Success
+        type: string
+    type: object
   model.Comment:
     properties:
       agent:
@@ -937,6 +948,27 @@ paths:
       summary: Approve a link
       tags:
       - Link
+  /upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Upload file
+      parameters:
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interceptor.ResponseSuccess-string'
+      summary: Upload file
+      tags:
+      - Upload
   /user/approveRegistration:
     get:
       consumes:
