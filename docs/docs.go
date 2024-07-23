@@ -794,6 +794,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/upload": {
+            "post": {
+                "description": "Upload file",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Upload"
+                ],
+                "summary": "Upload file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/interceptor.ResponseSuccess-string"
+                        }
+                    }
+                }
+            }
+        },
         "/user/approveRegistration": {
             "get": {
                 "description": "Approve user registration",
@@ -1578,6 +1610,22 @@ const docTemplate = `{
                 },
                 "data": {
                     "$ref": "#/definitions/model.User"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Success"
+                }
+            }
+        },
+        "interceptor.ResponseSuccess-string": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "type": "string"
                 },
                 "message": {
                     "type": "string",
