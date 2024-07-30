@@ -95,7 +95,7 @@ func (a *aliyun) CreateClient(accessKeyId *string, accessKeySecret *string) (_re
 
 // SendSms sends an SMS using the Aliyun SMS service
 func (a *aliyun) SendSms(req dysmsapi20170525.SendSmsRequest) (_err error) {
-	if req.TemplateCode == nil || req.SignName == nil || viper.GetString("aliyun.accessKeyId") == "" || viper.GetString("aliyun.access") == "" {
+	if viper.GetString("aliyun.accessKeyId") == "" || viper.GetString("aliyun.accessKeySecret") == "" {
 		return errors.New("missing required parameters")
 	}
 	client, _err := a.CreateClient(tea.String(viper.GetString("aliyun.accessKeyId")), tea.String(viper.GetString("aliyun.accessKeySecret")))
