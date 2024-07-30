@@ -1,0 +1,304 @@
+basePath: /
+definitions:
+  config.DatabaseConfig:
+    properties:
+      connMaxLifetime:
+        description: ConnMaxLifetime Maximum connection lifetime
+        example: 60
+        type: integer
+      database:
+        description: Database Database name
+        example: gin_study
+        type: string
+      host:
+        description: Host Database address
+        example: localhost
+        type: string
+      maxIdleConns:
+        description: MaxIdleConns Maximum number of idle connections
+        example: 10
+        type: integer
+      maxOpenConns:
+        description: MaxOpenConns Maximum number of open connections
+        example: 30
+        type: integer
+      password:
+        description: Password Database password
+        example: "123456"
+        type: string
+      port:
+        description: Port Database port
+        example: "3306"
+        type: string
+      username:
+        description: Username Database username
+        example: root
+        type: string
+    required:
+    - connMaxLifetime
+    - database
+    - host
+    - maxIdleConns
+    - maxOpenConns
+    - password
+    - port
+    - username
+    type: object
+  config.RedisConfig:
+    properties:
+      db:
+        description: DB Which repository is it
+        example: 1
+        type: integer
+      dialTimeout:
+        description: DialTimeout redis dial timeout
+        example: 10
+        type: integer
+      host:
+        description: Host redis host
+        example: localhost
+        type: string
+      poolSize:
+        description: PoolSize redis pool size
+        example: 10
+        type: integer
+      poolTimeout:
+        description: PoolTimeout redis pool timeout
+        example: 30
+        type: integer
+      port:
+        description: Port redis port
+        example: "6379"
+        type: string
+      readTimeout:
+        description: ReadTimeout redis read timeout
+        example: 30
+        type: integer
+      writeTimeout:
+        description: WriteTimeout redis write timeout
+        example: 30
+        type: integer
+    required:
+    - db
+    - dialTimeout
+    - host
+    - poolSize
+    - poolTimeout
+    - port
+    - readTimeout
+    - writeTimeout
+    type: object
+  install.AdminConfig:
+    properties:
+      name:
+        example: admin
+        type: string
+      password:
+        example: "123456"
+        type: string
+      phone:
+        example: "12345678901"
+        type: string
+      screenName:
+        example: admin
+        type: string
+      url:
+        example: http://localhost
+        type: string
+    required:
+    - name
+    - password
+    - phone
+    - screenName
+    - url
+    type: object
+  install.Step:
+    properties:
+      step:
+        example: 1
+        type: integer
+    type: object
+  res.Empty:
+    type: object
+  res.ErrorRes:
+    properties:
+      code:
+        description: Return status Code
+        example: 200
+        type: integer
+      errors:
+        description: Return specific Data
+        items:
+          type: string
+        type: array
+      message:
+        description: Return Message
+        example: ok
+        type: string
+    type: object
+  res.Response-install_Step:
+    properties:
+      code:
+        description: Return status Code
+        example: 200
+        type: integer
+      data:
+        allOf:
+        - $ref: '#/definitions/install.Step'
+        description: Return specific Data
+      message:
+        description: Return Message
+        example: ok
+        type: string
+    type: object
+  res.Response-res_Empty:
+    properties:
+      code:
+        description: Return status Code
+        example: 200
+        type: integer
+      data:
+        allOf:
+        - $ref: '#/definitions/res.Empty'
+        description: Return specific Data
+      message:
+        description: Return Message
+        example: ok
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Gin study is a small project for beginners to learn by writing a blog
+    built by the gin framework.
+  title: Gin Study API
+  version: 1.1.0
+paths:
+  /install/check:
+    get:
+      description: Check which step the installation program has reached, return to
+        the required steps, and if the installation is complete, return the 201 status
+        code
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-install_Step'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+      summary: Check the installation step
+      tags:
+      - Install
+  /install/step1:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Write the database configuration steps. If the database has already
+        been configured, return a 201 status code
+      parameters:
+      - description: Database configuration
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/config.DatabaseConfig'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: Initialize the database
+      tags:
+      - Install
+  /install/step2:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Write the redis configuration steps. If the redis has already been
+        configured, return a 201 status code
+      parameters:
+      - description: Reids configuration
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/config.RedisConfig'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: Initialize the redis
+      tags:
+      - Install
+  /install/step3:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Used to create a system administrator account, which can only have
+        one and can only be created through this step during system initialization
+      parameters:
+      - description: Reids configuration
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/install.AdminConfig'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: Create an admin account
+      tags:
+      - Install
+schemes:
+- http
+- https
+swagger: "2.0"
