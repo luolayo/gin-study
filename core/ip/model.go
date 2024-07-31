@@ -1,6 +1,11 @@
 package ip
 
-import "os"
+import (
+	"database/sql/driver"
+	"fmt"
+	"github.com/goccy/go-json"
+	"os"
+)
 
 type Type int
 
@@ -48,4 +53,27 @@ type Address struct {
 	Country string `json:"country"`
 	IpType  string `json:"ip_type"`
 	Isp     string `json:"isp"`
+}
+
+func (a *Address) Scan(value interface{}) error {
+	if value == nil {
+		return nil
+	}
+	// Convert the value from the database to bytes
+	bytes, ok := value.([]byte)
+	if !ok {
+		return fmt.Errorf("failed to scan Address: %v", value)
+	}
+	// Unmarshal the JSON-encoded data into the Address struct
+	return json.Unmarshal(bytes, a)
+}
+
+func (a Address) Value() (driver.Value, error) {
+	// Marshal the Address struct into JSON
+	bytes, err := json.Marshal(a)
+	if err != nil {
+		return nil, err
+	}
+	// Return the JSON-encoded data
+	return string(bytes), nil
 }

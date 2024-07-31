@@ -23,7 +23,7 @@ type User struct {
 	Url        string     `gorm:"size:150"`
 	ScreenName string     `gorm:"size:32"`
 	Created    *time.Time `gorm:"autoCreateTime"`
-	Activated  *time.Time `gorm:"autoCreateTime"`
+	IP         string     `gorm:"size:32"`
 	Logged     *time.Time `gorm:"autoCreateTime"`
 	Group      Group      `json:"group" gorm:"default:'guest'" form:"group"`
 	Token      string     `json:"token" gorm:"-"`
