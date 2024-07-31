@@ -3,6 +3,7 @@ package global
 import (
 	"github.com/luolayo/gin-study/config"
 	"github.com/luolayo/gin-study/core"
+	"github.com/luolayo/gin-study/core/ip"
 	"github.com/luolayo/gin-study/enum"
 	"github.com/luolayo/gin-study/model"
 )
@@ -11,10 +12,12 @@ var (
 	LOG   *core.Logger
 	DB    *core.GormClient
 	Redis *core.RedisClient
+	IP    *ip.Ip
 )
 
 func Init() {
 	InitLog()
+	InitIP()
 	InitDB()
 	InitRedis()
 }
@@ -34,6 +37,11 @@ func InitLog() {
 	} else {
 		LOG = core.NewLogger(core.DebugLevel)
 	}
+}
+
+func InitIP() {
+	IP = ip.NewIp()
+	IP.Init()
 }
 
 func AutoMigrate() error {
