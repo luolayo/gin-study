@@ -12,7 +12,7 @@ func init() {
 }
 
 func TestGlobal_DB(t *testing.T) {
-	t.Log(DB.Name())
+	t.Log(DB.GetClient().Name())
 }
 
 func TestGlobal_LOG(t *testing.T) {
