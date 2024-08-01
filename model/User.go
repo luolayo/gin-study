@@ -16,17 +16,17 @@ const (
 )
 
 type User struct {
-	Uid        uint       `gorm:"primaryKey;autoIncrement"`
-	Name       string     `gorm:"size:32;unique"`
-	Password   string     `gorm:"size:64"`
-	Phone      string     `gorm:"size:150;unique"`
-	Url        string     `gorm:"size:150"`
-	ScreenName string     `gorm:"size:32"`
-	Created    *time.Time `gorm:"autoCreateTime"`
-	IP         string     `gorm:"size:32"`
-	Logged     *time.Time `gorm:"autoCreateTime"`
-	Group      Group      `json:"group" gorm:"default:'guest'" form:"group"`
-	Token      string     `json:"token" gorm:"-"`
+	Uid        uint       `gorm:"primaryKey;autoIncrement" json:"uid"`
+	Name       string     `gorm:"size:32;unique" json:"name"`
+	Password   string     `gorm:"size:64" json:"-"`
+	Phone      string     `gorm:"size:150;unique" json:"phone"`
+	Url        string     `gorm:"size:150" json:"url"`
+	ScreenName string     `gorm:"size:32" json:"screenName"`
+	Created    *time.Time `gorm:"autoCreateTime" json:"created"`
+	IP         string     `gorm:"size:32" json:"ip"`
+	Logged     *time.Time `gorm:"autoCreateTime" json:"logged"`
+	Group      Group      `json:"group" gorm:"default:'guest'" form:"group" json:"group"`
+	Token      string     `json:"token" gorm:"-" json:"token"`
 
 	Contents []Content `gorm:"foreignKey:AuthorId" json:"-"`
 }

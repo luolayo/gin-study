@@ -29,5 +29,11 @@ func GetRouter() *gin.Engine {
 
 	router := r.Group("install")
 	UseInstallRoutes(router)
+
+	router = r.Group("/SMS")
+	UseSMSRoutes(router)
+
+	router = r.Group("/user")
+	UseUserRoutes(router)
 	return r
 }
