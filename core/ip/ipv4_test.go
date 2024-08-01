@@ -6,7 +6,7 @@ import (
 )
 
 func TestIpV4_Find(t *testing.T) {
-	d := V4{FilePath: "qqwry.dat"}
+	d := V4{FilePath: "../../data/qqwry.dat"}
 
 	err := d.InitFile()
 	if err != nil {

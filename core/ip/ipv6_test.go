@@ -9,7 +9,7 @@ import (
 
 func TestIpV6_Find(t *testing.T) {
 	dir, _ := os.Getwd()
-	FilePath := path.Join(dir, "/data/ipv6wry.db")
+	FilePath := path.Join(dir, "../../../data/ipv6wry.db")
 	d := V6{FilePath: FilePath}
 
 	err := d.InitFile()
