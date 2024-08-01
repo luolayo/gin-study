@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/luolayo/gin-study/core"
-	"github.com/luolayo/gin-study/docs"
+	_ "github.com/luolayo/gin-study/docs"
 	"github.com/luolayo/gin-study/enum"
 	"github.com/luolayo/gin-study/global"
 	"github.com/luolayo/gin-study/router"
@@ -11,7 +11,8 @@ import (
 )
 
 // @BasePath /
-// @title Gin Study API
+// @Title Gin Study API
+// @Host localhost:8080
 // @Version 1.1.0
 // @Description Gin study is a small project for beginners to learn by writing a blog built by the gin framework.
 // @Host localhost:8080
@@ -33,7 +34,6 @@ func main() {
 			panic(err)
 		}
 	}
-	docs.SwaggerInfo.Version = enum.AppVersion
 	if viper.GetString("app.mode") == string(enum.Release) {
 		gin.SetMode(gin.ReleaseMode)
 	}
