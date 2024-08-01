@@ -88,6 +88,28 @@ definitions:
     - readTimeout
     - writeTimeout
     type: object
+  content.CreateContentRequest:
+    properties:
+      cid:
+        type: integer
+      order:
+        type: integer
+      slug:
+        type: string
+      text:
+        type: string
+      title:
+        type: string
+      type:
+        $ref: '#/definitions/model.Type'
+    required:
+    - cid
+    - order
+    - slug
+    - text
+    - title
+    - type
+    type: object
   install.AdminConfig:
     properties:
       name:
@@ -118,6 +140,47 @@ definitions:
         example: 1
         type: integer
     type: object
+  model.Group:
+    enum:
+    - admin
+    - user
+    - guest
+    type: string
+    x-enum-varnames:
+    - GroupAdmin
+    - GroupUser
+    - GroupGuest
+  model.Type:
+    enum:
+    - post
+    - page
+    type: string
+    x-enum-varnames:
+    - TypePost
+    - TypePage
+  model.User:
+    properties:
+      created:
+        type: string
+      group:
+        $ref: '#/definitions/model.Group'
+      ip:
+        type: string
+      logged:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      screenName:
+        type: string
+      token:
+        type: string
+      uid:
+        type: integer
+      url:
+        type: string
+    type: object
   res.Empty:
     type: object
   res.ErrorRes:
@@ -130,6 +193,22 @@ definitions:
         description: Return specific Data
         items:
           type: string
+        type: array
+      message:
+        description: Return Message
+        example: ok
+        type: string
+    type: object
+  res.Response-array_model_User:
+    properties:
+      code:
+        description: Return status Code
+        example: 200
+        type: integer
+      data:
+        description: Return specific Data
+        items:
+          $ref: '#/definitions/model.User'
         type: array
       message:
         description: Return Message
@@ -151,6 +230,21 @@ definitions:
         example: ok
         type: string
     type: object
+  res.Response-model_User:
+    properties:
+      code:
+        description: Return status Code
+        example: 200
+        type: integer
+      data:
+        allOf:
+        - $ref: '#/definitions/model.User'
+        description: Return specific Data
+      message:
+        description: Return Message
+        example: ok
+        type: string
+    type: object
   res.Response-res_Empty:
     properties:
       code:
@@ -166,6 +260,68 @@ definitions:
         example: ok
         type: string
     type: object
+  user.LoginDTO:
+    properties:
+      name:
+        description: User name
+        example: admin
+        type: string
+      password:
+        description: User password
+        example: "123456"
+        type: string
+    required:
+    - name
+    - password
+    type: object
+  user.RegisterDTO:
+    properties:
+      code:
+        description: Verification code
+        example: "123456"
+        type: string
+      confirmPassword:
+        description: Confirm password is the same as password
+        example: "123456"
+        type: string
+      name:
+        description: User name
+        example: admin
+        type: string
+      password:
+        description: User password
+        example: "123456"
+        type: string
+      phone:
+        description: User phone number
+        example: "18888888888"
+        type: string
+      screenName:
+        description: User nickname
+        example: 罗拉
+        type: string
+      url:
+        description: User avatar
+        example: https://www.luola.me
+        type: string
+    required:
+    - code
+    - confirmPassword
+    - name
+    - password
+    - phone
+    type: object
+  user.UpdateDTO:
+    properties:
+      screenName:
+        description: User nickname
+        example: 罗拉
+        type: string
+      url:
+        description: User url
+        example: https://www.luola.me
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -174,6 +330,31 @@ info:
   title: Gin Study API
   version: 1.1.0
 paths:
+  /SMS/send:
+    get:
+      description: Sent verification code
+      parameters:
+      - description: Phone number
+        example: "18888888888"
+        format: "18888888888"
+        in: query
+        name: phone_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: SentVerificationCode
+      tags:
+      - SMS
   /install/check:
     get:
       description: Check which step the installation program has reached, return to
@@ -298,6 +479,474 @@ paths:
       summary: Create an admin account
       tags:
       - Install
+  /install/test:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: test
+      parameters:
+      - description: Reids configuration
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/content.CreateContentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: create content
+      tags:
+      - Content
+  /user/approveRegistration:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Approve user registration
+      parameters:
+      - description: User id
+        example: "1"
+        in: query
+        name: cid
+        required: true
+        type: string
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: ApproveRegistration
+      tags:
+      - User
+  /user/checkName:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Before registering a user, the front-end needs to check if the
+        username already exists. If the username already exists, the front-end should
+        prevent the use of that username to continue registration in order to reduce
+        API requests.
+      parameters:
+      - description: Username
+        example: luolayo
+        format: luolayo
+        in: query
+        maxLength: 10
+        minLength: 5
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: CheckName
+      tags:
+      - User
+  /user/checkPhone:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Before registering a user, the front-end needs to check if the
+        phone already exists. If the phone already exists, the front-end should prevent
+        the use of that phone to continue registration in order to reduce API requests.
+      parameters:
+      - description: UserPhone
+        example: "18888888888"
+        in: query
+        name: phone
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: CheckPhone
+      tags:
+      - User
+  /user/getUserInfoById:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get user information by id
+      parameters:
+      - description: User id
+        example: "1"
+        in: query
+        name: uid
+        required: true
+        type: string
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: GetUserInfoById
+      tags:
+      - User
+  /user/getUserList:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Due to the default registration of users as tourists, administrator
+        review is required, and all users can be queried through this API
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Page size
+        example: "10"
+        in: query
+        name: pageSize
+        type: string
+      - description: Page number
+        example: "1"
+        in: query
+        name: pageNum
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-array_model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: GetUserList
+      tags:
+      - User
+  /user/info:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Get user information
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: GetInfo
+      tags:
+      - User
+  /user/login:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: User login
+      parameters:
+      - description: User login data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/user.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: Login
+      tags:
+      - User
+  /user/logout:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: User logout
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: Logout
+      tags:
+      - User
+  /user/register:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: User Registration API. The user registration API is used to register
+        a new user. be careful! The front-end should perform verification before requesting
+        APIs, such as checking if the phone number and username already exist.
+      parameters:
+      - description: User registration data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/user.RegisterDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: Register
+      tags:
+      - User
+  /user/updateUserInfo:
+    put:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Update the user information API, which can partially transmit the
+        information that needs to be updated, or transmit all the information that
+        needs to be updated
+      parameters:
+      - description: User update data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/user.UpdateDTO'
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-model_User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: UpdateInfo
+      tags:
+      - User
+  /user/updateUserPassword:
+    patch:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Before users can change their password, they need to send a verification
+        code, which can only be updated after successful verification
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: New password
+        example: "123456"
+        in: formData
+        maxLength: 20
+        minLength: 6
+        name: newPassword
+        required: true
+        type: string
+      - description: Verification code
+        example: "123456"
+        in: formData
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: UpdatePassword
+      tags:
+      - User
+  /user/updateUserPhone:
+    patch:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Users need to verify the new phone number before updating their
+        phone number
+      parameters:
+      - description: Authorization token
+        example: '{{token}}'
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Phone number
+        example: "18888888888"
+        format: "18888888888"
+        in: formData
+        name: phone
+        required: true
+        type: string
+      - description: Verification code
+        example: "123456"
+        in: formData
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response-res_Empty'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.ErrorRes'
+      summary: UpdatePhone
+      tags:
+      - User
 schemes:
 - http
 - https

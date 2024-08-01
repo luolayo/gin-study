@@ -15,6 +15,43 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/SMS/send": {
+            "get": {
+                "description": "Sent verification code",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SMS"
+                ],
+                "summary": "SentVerificationCode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "18888888888",
+                        "example": "18888888888",
+                        "description": "Phone number",
+                        "name": "phone_number",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-model_User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
         "/install/check": {
             "get": {
                 "description": "Check which step the installation program has reached, return to the required steps, and if the installation is complete, return the 201 status code",
@@ -196,6 +233,683 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/install/test": {
+            "post": {
+                "description": "test",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Content"
+                ],
+                "summary": "create content",
+                "parameters": [
+                    {
+                        "description": "Reids configuration",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/content.CreateContentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-res_Empty"
+                        }
+                    },
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-res_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/approveRegistration": {
+            "get": {
+                "description": "Approve user registration",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "ApproveRegistration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "1",
+                        "description": "User id",
+                        "name": "cid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-res_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/checkName": {
+            "get": {
+                "description": "Before registering a user, the front-end needs to check if the username already exists. If the username already exists, the front-end should prevent the use of that username to continue registration in order to reduce API requests.",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "CheckName",
+                "parameters": [
+                    {
+                        "maxLength": 10,
+                        "minLength": 5,
+                        "type": "string",
+                        "format": "luolayo",
+                        "example": "luolayo",
+                        "description": "Username",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-res_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/checkPhone": {
+            "get": {
+                "description": "Before registering a user, the front-end needs to check if the phone already exists. If the phone already exists, the front-end should prevent the use of that phone to continue registration in order to reduce API requests.",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "CheckPhone",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "18888888888",
+                        "description": "UserPhone",
+                        "name": "phone",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-res_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/getUserInfoById": {
+            "get": {
+                "description": "Get user information by id",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "GetUserInfoById",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "1",
+                        "description": "User id",
+                        "name": "uid",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-model_User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/getUserList": {
+            "get": {
+                "description": "Due to the default registration of users as tourists, administrator review is required, and all users can be queried through this API",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "GetUserList",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "10",
+                        "description": "Page size",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "1",
+                        "description": "Page number",
+                        "name": "pageNum",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-array_model_User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/info": {
+            "get": {
+                "description": "Get user information",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "GetInfo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-model_User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/login": {
+            "post": {
+                "description": "User login",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "User login data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.LoginDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-model_User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/logout": {
+            "get": {
+                "description": "User logout",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Logout",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-res_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/register": {
+            "post": {
+                "description": "User Registration API. The user registration API is used to register a new user. be careful! The front-end should perform verification before requesting APIs, such as checking if the phone number and username already exist.",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Register",
+                "parameters": [
+                    {
+                        "description": "User registration data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.RegisterDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-model_User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/updateUserInfo": {
+            "put": {
+                "description": "Update the user information API, which can partially transmit the information that needs to be updated, or transmit all the information that needs to be updated",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "UpdateInfo",
+                "parameters": [
+                    {
+                        "description": "User update data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.UpdateDTO"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-model_User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/updateUserPassword": {
+            "patch": {
+                "description": "Before users can change their password, they need to send a verification code, which can only be updated after successful verification",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "UpdatePassword",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "maxLength": 20,
+                        "minLength": 6,
+                        "type": "string",
+                        "example": "123456",
+                        "description": "New password",
+                        "name": "newPassword",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "123456",
+                        "description": "Verification code",
+                        "name": "code",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-res_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/updateUserPhone": {
+            "patch": {
+                "description": "Users need to verify the new phone number before updating their phone number",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "UpdatePhone",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "{{token}}",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "18888888888",
+                        "example": "18888888888",
+                        "description": "Phone number",
+                        "name": "phone",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "123456",
+                        "description": "Verification code",
+                        "name": "code",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response-res_Empty"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/res.ErrorRes"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -309,6 +1023,37 @@ const docTemplate = `{
                 }
             }
         },
+        "content.CreateContentRequest": {
+            "type": "object",
+            "required": [
+                "cid",
+                "order",
+                "slug",
+                "text",
+                "title",
+                "type"
+            ],
+            "properties": {
+                "cid": {
+                    "type": "integer"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "slug": {
+                    "type": "string"
+                },
+                "text": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "$ref": "#/definitions/model.Type"
+                }
+            }
+        },
         "install.AdminConfig": {
             "type": "object",
             "required": [
@@ -350,6 +1095,65 @@ const docTemplate = `{
                 }
             }
         },
+        "model.Group": {
+            "type": "string",
+            "enum": [
+                "admin",
+                "user",
+                "guest"
+            ],
+            "x-enum-varnames": [
+                "GroupAdmin",
+                "GroupUser",
+                "GroupGuest"
+            ]
+        },
+        "model.Type": {
+            "type": "string",
+            "enum": [
+                "post",
+                "page"
+            ],
+            "x-enum-varnames": [
+                "TypePost",
+                "TypePage"
+            ]
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "group": {
+                    "$ref": "#/definitions/model.Group"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "logged": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "screenName": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "uid": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
         "res.Empty": {
             "type": "object"
         },
@@ -366,6 +1170,28 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "string"
+                    }
+                },
+                "message": {
+                    "description": "Return Message",
+                    "type": "string",
+                    "example": "ok"
+                }
+            }
+        },
+        "res.Response-array_model_User": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Return status Code",
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "description": "Return specific Data",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.User"
                     }
                 },
                 "message": {
@@ -398,6 +1224,29 @@ const docTemplate = `{
                 }
             }
         },
+        "res.Response-model_User": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Return status Code",
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "description": "Return specific Data",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    ]
+                },
+                "message": {
+                    "description": "Return Message",
+                    "type": "string",
+                    "example": "ok"
+                }
+            }
+        },
         "res.Response-res_Empty": {
             "type": "object",
             "properties": {
@@ -418,6 +1267,87 @@ const docTemplate = `{
                     "description": "Return Message",
                     "type": "string",
                     "example": "ok"
+                }
+            }
+        },
+        "user.LoginDTO": {
+            "type": "object",
+            "required": [
+                "name",
+                "password"
+            ],
+            "properties": {
+                "name": {
+                    "description": "User name",
+                    "type": "string",
+                    "example": "admin"
+                },
+                "password": {
+                    "description": "User password",
+                    "type": "string",
+                    "example": "123456"
+                }
+            }
+        },
+        "user.RegisterDTO": {
+            "type": "object",
+            "required": [
+                "code",
+                "confirmPassword",
+                "name",
+                "password",
+                "phone"
+            ],
+            "properties": {
+                "code": {
+                    "description": "Verification code",
+                    "type": "string",
+                    "example": "123456"
+                },
+                "confirmPassword": {
+                    "description": "Confirm password is the same as password",
+                    "type": "string",
+                    "example": "123456"
+                },
+                "name": {
+                    "description": "User name",
+                    "type": "string",
+                    "example": "admin"
+                },
+                "password": {
+                    "description": "User password",
+                    "type": "string",
+                    "example": "123456"
+                },
+                "phone": {
+                    "description": "User phone number",
+                    "type": "string",
+                    "example": "18888888888"
+                },
+                "screenName": {
+                    "description": "User nickname",
+                    "type": "string",
+                    "example": "罗拉"
+                },
+                "url": {
+                    "description": "User avatar",
+                    "type": "string",
+                    "example": "https://www.luola.me"
+                }
+            }
+        },
+        "user.UpdateDTO": {
+            "type": "object",
+            "properties": {
+                "screenName": {
+                    "description": "User nickname",
+                    "type": "string",
+                    "example": "罗拉"
+                },
+                "url": {
+                    "description": "User url",
+                    "type": "string",
+                    "example": "https://www.luola.me"
                 }
             }
         }
