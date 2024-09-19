@@ -18,7 +18,5 @@ type Comment struct {
 	Type       string      `gorm:"size:16;default:comment"`
 	Status     string      `gorm:"size:16;default:approved"`
 	Parent     uint
-
-	Content Content `gorm:"foreignKey:Cid"`
-	Author  User    `gorm:"foreignKey:AuthorId"`
+	Author     User `gorm:"foreignKey:AuthorId;references:Uid"`
 }
