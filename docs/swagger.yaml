@@ -88,28 +88,6 @@ definitions:
     - readTimeout
     - writeTimeout
     type: object
-  content.CreateContentRequest:
-    properties:
-      cid:
-        type: integer
-      order:
-        type: integer
-      slug:
-        type: string
-      text:
-        type: string
-      title:
-        type: string
-      type:
-        $ref: '#/definitions/model.Type'
-    required:
-    - cid
-    - order
-    - slug
-    - text
-    - title
-    - type
-    type: object
   install.AdminConfig:
     properties:
       name:
@@ -140,6 +118,17 @@ definitions:
         example: 1
         type: integer
     type: object
+  ip.Address:
+    properties:
+      country:
+        type: string
+      ip:
+        type: string
+      ip_type:
+        type: string
+      isp:
+        type: string
+    type: object
   model.Group:
     enum:
     - admin
@@ -150,14 +139,6 @@ definitions:
     - GroupAdmin
     - GroupUser
     - GroupGuest
-  model.Type:
-    enum:
-    - post
-    - page
-    type: string
-    x-enum-varnames:
-    - TypePost
-    - TypePage
   model.User:
     properties:
       created:
@@ -224,6 +205,21 @@ definitions:
       data:
         allOf:
         - $ref: '#/definitions/install.Step'
+        description: Return specific Data
+      message:
+        description: Return Message
+        example: ok
+        type: string
+    type: object
+  res.Response-ip_Address:
+    properties:
+      code:
+        description: Return status Code
+        example: 200
+        type: integer
+      data:
+        allOf:
+        - $ref: '#/definitions/ip.Address'
         description: Return specific Data
       message:
         description: Return Message
@@ -479,40 +475,20 @@ paths:
       summary: Create an admin account
       tags:
       - Install
-  /install/test:
-    post:
+  /test/IP:
+    get:
       consumes:
       - application/x-www-form-urlencoded
-      description: test
-      parameters:
-      - description: Reids configuration
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/content.CreateContentRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/res.Response-res_Empty'
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/res.Response-res_Empty'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/res.ErrorRes'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/res.ErrorRes'
-      summary: create content
+            $ref: '#/definitions/res.Response-ip_Address'
+      summary: GetIPAddredd
       tags:
-      - Content
+      - Test
   /user/approveRegistration:
     get:
       consumes:

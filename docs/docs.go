@@ -234,9 +234,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/install/test": {
-            "post": {
-                "description": "test",
+        "/test/IP": {
+            "get": {
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -244,43 +243,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Content"
+                    "Test"
                 ],
-                "summary": "create content",
-                "parameters": [
-                    {
-                        "description": "Reids configuration",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/content.CreateContentRequest"
-                        }
-                    }
-                ],
+                "summary": "GetIPAddredd",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/res.Response-res_Empty"
-                        }
-                    },
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/res.Response-res_Empty"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/res.ErrorRes"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/res.ErrorRes"
+                            "$ref": "#/definitions/res.Response-ip_Address"
                         }
                     }
                 }
@@ -1023,37 +993,6 @@ const docTemplate = `{
                 }
             }
         },
-        "content.CreateContentRequest": {
-            "type": "object",
-            "required": [
-                "cid",
-                "order",
-                "slug",
-                "text",
-                "title",
-                "type"
-            ],
-            "properties": {
-                "cid": {
-                    "type": "integer"
-                },
-                "order": {
-                    "type": "integer"
-                },
-                "slug": {
-                    "type": "string"
-                },
-                "text": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "$ref": "#/definitions/model.Type"
-                }
-            }
-        },
         "install.AdminConfig": {
             "type": "object",
             "required": [
@@ -1095,6 +1034,23 @@ const docTemplate = `{
                 }
             }
         },
+        "ip.Address": {
+            "type": "object",
+            "properties": {
+                "country": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "ip_type": {
+                    "type": "string"
+                },
+                "isp": {
+                    "type": "string"
+                }
+            }
+        },
         "model.Group": {
             "type": "string",
             "enum": [
@@ -1106,17 +1062,6 @@ const docTemplate = `{
                 "GroupAdmin",
                 "GroupUser",
                 "GroupGuest"
-            ]
-        },
-        "model.Type": {
-            "type": "string",
-            "enum": [
-                "post",
-                "page"
-            ],
-            "x-enum-varnames": [
-                "TypePost",
-                "TypePage"
             ]
         },
         "model.User": {
@@ -1214,6 +1159,29 @@ const docTemplate = `{
                     "allOf": [
                         {
                             "$ref": "#/definitions/install.Step"
+                        }
+                    ]
+                },
+                "message": {
+                    "description": "Return Message",
+                    "type": "string",
+                    "example": "ok"
+                }
+            }
+        },
+        "res.Response-ip_Address": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Return status Code",
+                    "type": "integer",
+                    "example": 200
+                },
+                "data": {
+                    "description": "Return specific Data",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ip.Address"
                         }
                     ]
                 },

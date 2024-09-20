@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/luolayo/gin-study/api/SMS"
 	"github.com/luolayo/gin-study/api/install"
+	"github.com/luolayo/gin-study/api/test"
 	"github.com/luolayo/gin-study/api/user"
 	"github.com/luolayo/gin-study/middleware"
 )
@@ -41,4 +42,8 @@ func UseUserRoutes(r *gin.RouterGroup) {
 
 func UseSMSRoutes(r *gin.RouterGroup) {
 	r.GET("/send", SMS.SentVerificationCode)
+}
+
+func UseTestRoutes(r *gin.RouterGroup) {
+	r.GET("/IP", test.GetIPAddredd)
 }
