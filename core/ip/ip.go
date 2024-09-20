@@ -10,6 +10,15 @@ import (
 	"strings"
 )
 
+/**
+ * How to use this snippet:
+ * 1. Create a new IP object
+ * 2. Initialize the IP library
+ * 3. Find the IP address
+ * @Param ip string
+ * @Return Address, error
+ */
+
 func NewIp() *Ip {
 	return &Ip{}
 }
